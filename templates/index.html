@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Clothes Search Index</title>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='index.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.3.0/css/all.min.css" />
+</head>
+
+<body>
+    <div class="container">
+        <h1 class="tittle">
+            Welcome to our clothing search engine
+        </h1>
+
+        <div class="search-bar">
+            <div class="dropdown">
+                <div id="drop-text" class="dropdown-text">
+                    <span id="span">Our index</span>
+                    <i id="icon" class="fa-solid fa-chevron-down"></i>
+                </div>
+                <ul id="list" class="dropdown-list">
+                    <li class="dropdown-list-item" name="indice" value="our-index" onclick="setEleccion('Our index')">Our index</li>
+                    <li class="dropdown-list-item" name="indice" value="psql" onclick="setEleccion('PSQL')">PSQL</li>
+                </ul>
+            </div>
+
+            <form class="search-box" action="/" method="POST">
+                <input type="hidden" name="eleccion" id="eleccion" value="">
+                <select name="idioma">
+                    <option value='es'>Español</option>
+                    <option value='en'>English</option>
+                    <option value='de'>Aleman</option>
+                    <option value='it'>Italiano</option>
+                    <option value='pt'>Portugues</option>
+                </select>
+                <input name="input_text" type="text" id="search-input" placeholder="Search by our index..." />
+                <i class="fa-solid fa-magnifying-glass"></i>
+            </form>
+        </div>
+
+        <div class="for_results">
+            {% if product_names %}
+            <div style="max-height: 300px; overflow-y: auto;">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Track Name</th>
+                            <th>Track Artist</th>
+                            <th>Lyrics</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for track in product_names %}
+                        <tr>
+                            <td>{{ track['track_name'] }}</td>
+                            <td>{{ track['track_artist'] }}</td>
+                            <td>{{ track['lyrics'] }}</td>
+                            <td>
+                                <form action="/listen" method="GET">
+                                    <input type="hidden" name="track_name" value="{{ track['track_name'] }}">
+                                    <input type="hidden" name="track_artist" value="{{ track['track_artist'] }}">
+                                    <button type="submit">Listen</button>
+                                </form>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% endif %}
+        </div>
+
+        <div class="for_results">
+            {% if time %}
+            <p> Tiempo de ejecución: {{ time }} segundos</p>
+            {% endif %}
+        </div>
+
+        <div class="under">
+            Created by: Angel Mucha, Jean Pierre Sotomayor, Juan Torres
+        </div>
+    </div>
+
+    <script>
+        let dropdownBtnText = document.getElementById("drop-text");
+        let span = document.getElementById("span");
+        let icon = document.getElementById("icon");
+        let list = document.getElementById("list");
+        let input = document.getElementById("search-input");
+        let listItems = document.querySelectorAll(".dropdown-list-item");
+
+        dropdownBtnText.onclick = function () {
+            list.classList.toggle("show");
+            icon.style.rotate = "-180deg";
+        };
+
+        window.onclick = function (e) {
+            if (e.target.id !== "drop-text" && e.target.id !== "icon" && e.target.id !== "span") {
+                list.classList.remove("show");
+                icon.style.rotate = "0deg";
+            }
+        };
+
+        for (item of listItems) {
+            item.onclick = function (e) {
+                span.innerText = e.target.innerText;
+                if (e.target.innerText == "Our index") {
+                    input.placeholder = "Search by our index...";
+                } else {
+                    input.placeholder = "Search by " + e.target.innerText + "...";
+                }
+            };
+        }
+
+        function setEleccion(value) {
+            document.getElementById("eleccion").value = value;
+            document.getElementById("span").innerText = value;
+            if (value == "Our index") {
+                document.getElementById("search-input").placeholder = "Search by our index...";
+            } else {
+                document.getElementById("search-input").placeholder = "Search by " + value + "...";
+            }
+        }
+    </script>
+</body>
+
+</html>
