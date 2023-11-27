@@ -391,6 +391,14 @@ La implementacion de HNSWFlat en la clase faiis, es un algoritmo de búsqueda de
 Desventajas:  
 - La desventaja mas notoria que se encontro, es que para un gran conjunto de datos la construccion de este indice tienen un consumo significativo de recursos, especialmente en términos de memoria. Mas que todo una limitacion para entornos limitados como por ejemplo maquinas virtuales.
 
+
+### Interfaz visual
+Para realizar consultas en nuestro buscador, tendras que elegir el tipo de data de la cual quieres buscar, las busquedas se realizaran en cuanto el artista, nombre de la cancion y letra de esta misma, ademas de la cantidad de resultados que quieras recuperar(top k).
+
+![Mi Imagen](fotos/front.png)
+
+
+
 ### Experimento  
 #### El problema de Rtree  
 El problema de Rtree se agrava cuando se enfrenta a conjuntos de datos de alta dimensionalidad, contribuyendo así a la maldición de la dimensionalidad. A medida que aumenta la cantidad de dimensiones en el árbol Rtree, el cálculo de distancias se ve afectado negativamente. Si bien se sugiere incrementar las dimensiones para separar elementos similares, la eficiencia de Rtree disminuye significativamente. Este fenómeno se alinea con la maldición de la dimensionalidad, donde el exceso de variables independientes en un conjunto de datos puede impactar la calidad y la interpretación de los modelos. En el caso específico de Rtree, redimensionar la data a una dimensión más manejable, como 100, se convierte en una estrategia para mitigar los problemas derivados de la alta dimensionalidad.
