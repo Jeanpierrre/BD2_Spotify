@@ -133,6 +133,36 @@ Todas estas funciones se encuentra en `calcular.py`.
 - Almacenamiento de Resultados:
     - Los valores calculados de TF-IDF se guardan en el archivo JSON 'tfidf_data.json' con un formato estructurado y legible.
     - Las longitudes de los documentos se almacenan en el archivo JSON 'document_lengths.json', proporcionando una referencia rápida para futuros análisis.
+```python
+def calculate_tfidf(term, doc_tokens, inverted_index, total_docs):
+
+    tf = calculate_tf(term, doc_tokens)
+    idf = calculate_idf(term, inverted_index, total_docs)
+    tfidf = tf * idf
+    return tfidf
+
+def calculate_document_length(doc_tokens, inverted_index, total_docs):
+
+    squared_sum = 0
+    for term in set(doc_tokens):
+        tfidf = calculate_tfidf(term, doc_tokens, inverted_index, total_docs)
+        squared_sum += tfidf**2
+    doc_length = math.sqrt(squared_sum)
+    return doc_length
+
+for idioma in idiomas_mapeados:
+    for doc_id, tokens in doc_tokens[idioma].items():
+        #print(tokens)
+        total_docs=len(doc_tokens[idioma])
+        tfidf_values = {}#inicializar
+        doc_length = calculate_document_length(tokens, inverted_index[idioma], total_docs)
+        #                       print("Idioma: ",idioma," len ",total_docs)
+        for term in set(tokens):
+            tfidf = calculate_tfidf(term, tokens, inverted_index[idioma], total_docs)
+            tfidf_values[term] = tfidf
+        tfidf_data[idioma][doc_id] = tfidf_values
+        document_lengths[idioma][doc_id] = doc_length
+```
 
 ### Descarga de canciones  
 La descarga de canciones se llevó a cabo mediante el uso de dos bibliotecas fundamentales: ```Spotify``` y ```spotdl```.
