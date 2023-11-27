@@ -24,7 +24,8 @@ Inicialmente, el conjunto de datos original fue utilizado en la tercera semana d
 ### Descarga de canciones  
 La descarga de canciones se llevó a cabo mediante el uso de dos bibliotecas fundamentales: ```Spotify``` y ```spotdl```.
 
-- Spotify:
+- Spotify:  
+  
 ![Mi Imagen](fotos/api.png)
 
 
@@ -46,7 +47,7 @@ def buscar(autor, song):
         print("El nombre del artista está vacío.")
 ```
 
-- Spotdl:
+- Spotdl:  
   ![Mi Imagen](fotos/spotdl.png)
 La biblioteca ```spotdl``` fue utilizada para tomar la URL proporcionada por Spotify y realizar la descarga directa de la canción en nuestra máquina, asegurando así la disponibilidad local de las pistas musicales.
 
@@ -67,7 +68,7 @@ def descargar(artista,name):
 
 ### Extracción de características
 Hay muchas formas de extraer caracteristicas de canciones, se pueden usar modelos que automaticamente te sacan un numero predefinido de caracteristicas como lo son la Api de Spotify y openL3.  
-![Mi Imagen](fotos/formas.png)
+![Mi Imagen](fotos/for.png)
 
 Sin embargo, para esta ocacion usaremos librosa, ya que nos permite extraer un conjunto muy alto de caracteristicas dependiendo de nuestras necesidades.  
 ![Mi Imagen](fotos/librosa.png)
