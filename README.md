@@ -20,6 +20,16 @@ Inicialmente, el conjunto de datos original fue utilizado en la tercera semana d
 
 
 ### Extracción de características
+Hay muchas formas de extraer caracteristicas de canciones, se pueden usar modelos que automaticamente te sacan un numero predefinido de caracteristicas como lo son la Api de Spotify y openL3.  
+FOTTO  
+Sin embargo, para esta ocacion usaremos librosa, ya que nos permite extraer un conjunto muy alto de caracteristicas dependiendo de nuestras necesidades.  
+fotoo  
+
+
+
+
+
+
 Para este proyecto, es escencial tener las caracteristicas de una canciones, ya que con esto podemos reconocer canciones parecidas gracias los siguientes caractersiticas:  
 #### MFCC (Coeficientes Cepstrales de Frecuencia Mel)  
 Representa la forma en que el oído humano percibe diferentes frecuencias.  
