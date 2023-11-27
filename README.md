@@ -1,4 +1,4 @@
-# proyecto2_bd
+# Proyecto 3 - Bases de Datos 
 
 ## Jean Pierre Sotomayor Cavero   100%
 
