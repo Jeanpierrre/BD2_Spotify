@@ -19,6 +19,18 @@ Inicialmente, el conjunto de datos original fue utilizado en la tercera semana d
 
 
 
+
+
+### Descarga de canciones  
+Para descargar las canciones nos ayudamos del csv, en especial del ```python track_name ``` y ```python track_artist ```
+
+
+
+
+
+
+
+
 ### Extracción de características
 Hay muchas formas de extraer caracteristicas de canciones, se pueden usar modelos que automaticamente te sacan un numero predefinido de caracteristicas como lo son la Api de Spotify y openL3.  
 ![Mi Imagen](fotos/image.png)
@@ -32,7 +44,7 @@ Sin embargo, para esta ocacion usaremos librosa, ya que nos permite extraer un c
 
 
 
-Para este proyecto, es escencial tener las caracteristicas de una canciones, ya que con esto podemos reconocer canciones parecidas gracias los siguientes caractersiticas:  
+Debido a que para este proyecto, es escencial tener las caracteristicas de una cancion, usaremos librosa para extraer las siguientes caracteristicas:   
 #### MFCC (Coeficientes Cepstrales de Frecuencia Mel)  
 Representa la forma en que el oído humano percibe diferentes frecuencias.  
 Se calculan 20 coeficientes de MFCC a partir de la señal de audio, estos sirven para captura características fundamentales de la señal relacionadas con la percepción auditiva.  
