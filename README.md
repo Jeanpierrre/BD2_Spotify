@@ -29,7 +29,7 @@ La descarga de canciones se llevó a cabo mediante el uso de dos bibliotecas fun
 ![Mi Imagen](fotos/api.png)
 
 
-Esta biblioteca se encargó de utilizar los datos disponibles en nuestro conjunto, específicamente, el nombre de la canción ```(track_name)``` y el artista ```(track_artist)```. A partir de esta información, se generó una URL directa a Spotify para la canción correspondiente. Se creo la siguiente funcion para ese fin:
+Esta biblioteca se encargó de utilizar los datos disponibles en nuestro conjunto, específicamente, el nombre de la canción ```(track_name)``` y el artista ```(track_artist)```. A partir de esta información, se generó una URL directa a Spotify para la canción correspondiente. 
 ```python
 
 def buscar(autor, song):
@@ -46,6 +46,7 @@ def buscar(autor, song):
     else:
         print("El nombre del artista está vacío.")
 ```
+Esta función utiliza la biblioteca Spotify para buscar la canción especificada por el nombre y el artista. Devuelve la URL directa de la canción en Spotify.
 
 - Spotdl:  
   ![Mi Imagen](fotos/spotdl.png)  
@@ -60,7 +61,8 @@ def descargar(artista,name):
         print(output)
     except subprocess.CalledProcessError as e:
         print("Error al descargar la pista:", e)
-```
+```  
+Utiliza la URL de Spotify obtenida mediante la función ```buscar``` y emplea la biblioteca ```spotdl``` para descargar la canción en la máquina local.
 
 
 
