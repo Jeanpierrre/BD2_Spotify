@@ -21,9 +21,11 @@ Inicialmente, el conjunto de datos original fue utilizado en la tercera semana d
 
 ### Extracción de características
 Hay muchas formas de extraer caracteristicas de canciones, se pueden usar modelos que automaticamente te sacan un numero predefinido de caracteristicas como lo son la Api de Spotify y openL3.  
-FOTTO  
+![Mi Imagen](fotos/image.png)
+
 Sin embargo, para esta ocacion usaremos librosa, ya que nos permite extraer un conjunto muy alto de caracteristicas dependiendo de nuestras necesidades.  
-fotoo  
+![Mi Imagen](fotos/librosa.png)
+  
 
 
 
