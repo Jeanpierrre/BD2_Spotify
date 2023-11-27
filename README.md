@@ -6,6 +6,14 @@ Angel Mucha Huaman             100%
 
 Juan Torres                    100%
 
+
+## Organización del equipo
+
+|            Participante             |   Papel   |
+|:-----------------------------------:|:---------:|
+|  Jean Pierre Sotomayor Cavero       |  Backend  |
+|  Angel Mucha Huaman                 |  Backend  |
+|  Juan Torres                        | Frontend  |
 ## Introducción
 La exploración y extracción de información en documentos de texto involucra un proceso algorítmico fascinante y, en ciertos aspectos, intrincado. En la actualidad, se dispone de una amplia gama de técnicas y algoritmos diseñados para llevar a cabo búsquedas en archivos textuales, priorizando la precisión y la eficiencia. En este contexto, nos sumergiremos en la aplicación del método de indexación invertida para la búsqueda de textos en el conjunto de datos de ArXiv, una plataforma de distribución de archivos de código abierto.
 
