@@ -200,9 +200,7 @@ Desventajas:
 
 ### Experimento  
 #### El problema de Rtree  
-El árbol Rtree es una estructura dimensional que organiza sus elementos en ubicaciones geográficas según la dimensión especificada en el árbol. Aunque se recomienda aumentar la cantidad de dimensiones del árbol Rtree para separar elementos similares, surge un problema cuando la dimensión es demasiado grande. En este caso, si realizamos una búsqueda KNN en una dimensión, la distancia retornará un resultado, pero al hacer la misma consulta en un árbol de 2 dimensiones, la distancia se verá afectada y aumentará. Este problema persiste al aumentar las dimensiones, ya que el cálculo de distancias depende directamente de ellas. Esto contrasta con otros enfoques que pueden trabajar con un número significativo de dimensiones y redimensionarse sin problemas.  
-Como el arbol Rtree no es optimo para tantas dimensiones, en el contexto de la inserccion de datos al arbol, se redimensionara la data a una dimension de 100.
-
+El problema de Rtree se agrava cuando se enfrenta a conjuntos de datos de alta dimensionalidad, contribuyendo así a la maldición de la dimensionalidad. A medida que aumenta la cantidad de dimensiones en el árbol Rtree, el cálculo de distancias se ve afectado negativamente. Si bien se sugiere incrementar las dimensiones para separar elementos similares, la eficiencia de Rtree disminuye significativamente. Este fenómeno se alinea con la maldición de la dimensionalidad, donde el exceso de variables independientes en un conjunto de datos puede impactar la calidad y la interpretación de los modelos. En el caso específico de Rtree, redimensionar la data a una dimensión más manejable, como 100, se convierte en una estrategia para mitigar los problemas derivados de la alta dimensionalidad.
 ![Mi Imagen](fotos/PCA.png)
 
 
