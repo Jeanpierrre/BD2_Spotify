@@ -95,6 +95,7 @@ Extrae la intensidad de los tonos musicasles a lo largo de la señal de audio.
 ```python
         chroma = librosa.feature.chroma_stft(y=audio, sr=sr)
 ```
+![Librosa](https://librosa.org/doc/main/_images/librosa-feature-chroma_stft-1.png)
 
 ### Contraste Espectral  
 Es una medida que destaca las regiones en una señal de audio que tienen una diferencia significativa en cuanto a energía espectral.  
@@ -102,17 +103,22 @@ Es una medida que destaca las regiones en una señal de audio que tienen una dif
 ```python
         contrast = librosa.feature.spectral_contrast(y=audio, sr=sr)
 ```
+![Librosa](https://librosa.org/doc/main/_images/librosa-feature-spectral_contrast-1.png)
+
 ### Tonal Centroid Features  
 Proporciona información sobre la estructura tonal y armónica de una pieza musical.
 ```python
             tonnetz = librosa.feature.tonnetz(y=audio, sr=sr)
 ```
+![Librosa](https://librosa.org/doc/main/_images/librosa-feature-tonnetz-1.png)
 
 ### Tempo y Tempograma  
 El tempo se refiere a la velocidad o ritmo de una composición musical.  
 ```python
         tempo, tempogram = librosa.beat.beat_track(y=audio, sr=sr)
 ```
+![Librosa](https://librosa.org/doc/main/_images/librosa-beat-plp-1_00.png)
+
 ### Algoritmos de búsqueda sin indexación 
 
 La búsqueda secuencial se caracteriza por su simplicidad al calcular la similitud entre datos sin emplear indexación. Aunque su implementación es sencilla, conlleva una alta complejidad computacional al utilizar fuerza bruta. Este enfoque se utiliza en las búsquedas KNN y por rango, sirviéndose de esquemas específicos para optimizar la exploración de datos.
