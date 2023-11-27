@@ -41,6 +41,40 @@ El preprocesamiento de la data se realizó en un código aparte, llamado ```toke
 
 - Abre un archivo CSV llamado 'new_spotify.csv'.
 - Itera sobre las filas del archivo y realiza las siguientes acciones para cada fila:
+    ```python
+    for row in csv_reader:
+
+        # Obtener el ID de la fila
+        row_id = row['track_id']
+        idioma_track=row['language']
+
+        if idioma_track in idiomas_mapeados:
+            idioma=idioma_track
+            stop= stopwords[idioma_track]
+        else:
+            idioma='en'
+            stop=stopwords['en']
+ 
+        # Concatenar los atributos textuales en una cadena
+        atributos_textuales = [row[key] for key in row if key not in ['track_id','track_popularity', 'track_album_release_date','danceability','energy','key','loudness','mode','speechiness'
+                                                                    ,'acousticness','instrumentalness','liveness','valence','tempo','duration_ms','track_album_id','playlist_id']]
+        texto_completo = ' '.join(atributos_textuales)
+        
+        # Limpieza y tokenización del texto
+        tokens = clean_and_tokenize(texto_completo)
+
+        # Eliminar las stopwords
+        tokens = [token for token in tokens if token.lower() not in stop]
+        
+        # Aplicar stemming a los tokens
+        tokens = [stemmer.stem(token) for token in tokens]
+
+        #ordenar los tokens
+        tokens.sort()
+        
+        # Almacenar el ID de la fila y sus tokens en el diccionario
+        data[idioma][row_id] = tokens
+    ```
     - Obtiene el ID de la fila y el idioma de la pista.
     - Concatena los atributos textuales de la fila en una cadena.
     - Limpia y tokeniza el texto.
