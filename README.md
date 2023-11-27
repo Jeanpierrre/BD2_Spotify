@@ -52,11 +52,20 @@ El tempo se refiere a la velocidad o ritmo de una composición musical.
 ```python
         tempo, tempogram = librosa.beat.beat_track(y=audio, sr=sr)
 ```
-### Indexación y Búsqueda  
+### Algoritmos de búsqueda sin indexación 
 
-En cuanto a la implementación de un eficiente sistema de indexación y búsqueda para recuperar rápidamente canciones similares en grandes conjuntos de datos musicales, se usaron los siguientes:  
+La búsqueda secuencial se caracteriza por su simplicidad al calcular la similitud entre datos sin emplear indexación. Aunque su implementación es sencilla, conlleva una alta complejidad computacional al utilizar fuerza bruta. Este enfoque se utiliza en las búsquedas KNN y por rango, sirviéndose de esquemas específicos para optimizar la exploración de datos.
+### KNN Range Search
+Implica identificar todas las canciones dentro de un rango predefinido con respecto a una canción de consulta. En lugar de limitarse a un número específico de vecinos más cercanos, este enfoque permite recuperar un conjunto más amplio de canciones que comparten similitudes específicas con la canción de interés.  
+
+
+### KNN con Cola de Prioridad  
+Este metodo optimiza la búsqueda de canciones similares al utilizar una estructura de datos que prioriza las comparaciones más prometedoras. En lugar de examinar exhaustivamente todas las canciones, esta implementación se centra en las más relevantes, mejorando significativamente la eficiencia del algoritmo.  
+
+
+
 ### KNN-Secuencial  
-El método de k-NN secuencial se basa en la búsqueda secuencial para encontrar las k canciones más cercanas a una consulta. Utiliza la distancia euclidiana entre características musicales para determinar la similitud y proporciona una solución sencilla pero efectiva para recuperar canciones similares en grandes conjuntos de datos musicales.    
+El método de k-NN secuencial se basa en la búsqueda secuencial para encontrar las k canciones más cercanas a una consulta. Utiliza la distancia euclidiana entre características musicales para determinar la similitud y proporciona una solución sencilla pero efectiva para recuperar canciones similares en grandes conjuntos de datos musicales.     
 ```python
 def knn_sequential(query, k):
     distances = []
@@ -72,32 +81,29 @@ def knn_sequential(query, k):
     
     return neighbors
 ```
-### KNN con Cola de Prioridad  
-Este metodo optimiza la búsqueda de canciones similares al utilizar una estructura de datos que prioriza las comparaciones más prometedoras. En lugar de examinar exhaustivamente todas las canciones, esta implementación se centra en las más relevantes, mejorando significativamente la eficiencia del algoritmo.
 
-```python
 
-def knn_search_priority_queue(query, k):
-    similarities = cosine_similarity(query.reshape(1, -1), data_normalized).flatten()
-    priority_queue = PriorityQueue()
-    for i, sim in enumerate(similarities):
-        priority_queue.put((-sim, nombres_id[i])) 
-    neighbors = []
-    for _ in range(k):
-        sim, neighbor = priority_queue.get()
-        neighbors.append((neighbor, -sim))
-    return neighbors
-```
-### KNN Range Search
-Implica identificar todas las canciones dentro de un rango predefinido con respecto a una canción de consulta. En lugar de limitarse a un número específico de vecinos más cercanos, este enfoque permite recuperar un conjunto más amplio de canciones que comparten similitudes específicas con la canción de interés.
+### Faiss(HNSWFlat)  
 
-```python
-def knn_range_search(query, radio):
-    vecinos_en_radio = []
-    for i, sample in enumerate(data_normalized):
-        distancia = euclidean_distances(query.reshape(1, -1), sample.reshape(1, -1))[0][0]
-        if distancia is not None and distancia <= radio:
-            vecinos_en_radio.append((nombres_id[i], distancia))
-    vecinos_en_radio = sorted(vecinos_en_radio, key=lambda x: x[1])
-    return vecinos_en_radio
-```
+La implementacion de HNSWFlat en la clase faiis, es un algoritmo de búsqueda de vecinos similares que se basa en la idea de crear una estructura jerárquica para organizar eficientemente los vectores característicos en un espacio métrico de alta dimensión. Funciona mediante la construcción de un grafo de conexión, donde cada nodo se conecta con un número fijo de vecinos cercanos, facilitando la exploración de regiones similares. La estructura jerárquica permite realizar búsquedas rápidas, ya que se pueden saltar entre niveles para reducir el espacio de búsqueda. El algoritmo consta de 3 partes importantes:   
+- Al construir se establecen conexiones entre los nodos en cada capa del grafo. Cada nodo representa un vector característico del conjunto de datos, y las conexiones se establecen según la similitud métrica entre los vectores.
+- Los nodos en capas superiores representan grupos más amplios, permitiendo una búsqueda más rápida en el espacio métrico al reducir el espacio de búsqueda antes de descender a capas inferiores para obtener detalles más específicos.  
+ 
+FOTOO  
+
+Desventajas:  
+- La desventaja mas notoria que se encontro, es que para un gran conjunto de datos la construccion de este indice tienen un consumo significativo de recursos, especialmente en términos de memoria. Mas que todo una limitacion para entornos limitados como por ejemplo maquinas virtuales.
+
+### Experimento  
+#### El problema de Rtree  
+El árbol Rtree es una estructura dimensional que organiza sus elementos en ubicaciones geográficas según la dimensión especificada en el árbol. Aunque se recomienda aumentar la cantidad de dimensiones del árbol Rtree para separar elementos similares, surge un problema cuando la dimensión es demasiado grande. En este caso, si realizamos una búsqueda KNN en una dimensión, la distancia retornará un resultado, pero al hacer la misma consulta en un árbol de 2 dimensiones, la distancia se verá afectada y aumentará. Este problema persiste al aumentar las dimensiones, ya que el cálculo de distancias depende directamente de ellas. Esto contrasta con otros enfoques que pueden trabajar con un número significativo de dimensiones y redimensionarse sin problemas.  
+Como el arbol Rtree no es optimo para tantas dimensiones, en el contexto de la inserccion de datos al arbol, se redimensionara la data a una dimension de 100.
+
+foto  
+
+Por lo tanto, a fines del experimento este se realizara bajo las mismas condiciones de data redimensionada para todos los algoritmos.  
+
+
+
+
+
