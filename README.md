@@ -84,6 +84,12 @@ El preprocesamiento de la data se realizó en un código aparte, llamado ```toke
 #### Guardado en Formato JSON:
 - Guarda los datos procesados en archivos JSON separados para cada idioma.
 - Los archivos JSON se guardan con el nombre 'archivo_procesado.json' en carpetas separadas para cada idioma.
+```python
+for idioma,datos in data.items():
+    nombre_archivo = os.path.join(idioma, 'archivo_procesado.json')
+    with open(nombre_archivo, 'w') as json_file:
+        json.dump(data[idioma], json_file, indent=4)
+```
 
 ### Construcción del indice invertido
 Para esta funcion usamos el algoritmo visto en clase para la creacion de indice invertido en memoria secundaria:
