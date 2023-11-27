@@ -90,8 +90,8 @@ La implementacion de HNSWFlat en la clase faiis, es un algoritmo de búsqueda de
 - Al construir se establecen conexiones entre los nodos en cada capa del grafo. Cada nodo representa un vector característico del conjunto de datos, y las conexiones se establecen según la similitud métrica entre los vectores.
 - Los nodos en capas superiores representan grupos más amplios, permitiendo una búsqueda más rápida en el espacio métrico al reducir el espacio de búsqueda antes de descender a capas inferiores para obtener detalles más específicos.  
  
-![Mi Imagen](fotos/Faiss_.png)
-![Mi Imagen](fotos/Union.png)
+![Mi Imagen](fotos/Faiss_.PNG)
+![Mi Imagen](fotos/Union.PNG)
   
 
 Desventajas:  
