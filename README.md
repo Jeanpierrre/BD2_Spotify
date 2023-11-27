@@ -61,6 +61,7 @@ Implica identificar todas las canciones dentro de un rango predefinido con respe
 
 ### KNN con Cola de Prioridad  
 Este metodo optimiza la búsqueda de canciones similares al utilizar una estructura de datos que prioriza las comparaciones más prometedoras. En lugar de examinar exhaustivamente todas las canciones, esta implementación se centra en las más relevantes, mejorando significativamente la eficiencia del algoritmo.  
+![Mi Imagen](fotos/b.png)
 
 
 
