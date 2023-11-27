@@ -86,6 +86,9 @@ Se calculan 20 coeficientes de MFCC a partir de la señal de audio, estos sirven
     mfccs = librosa.feature.mfcc(y=audio, sr=sr, n_mfcc=20)
     mfcc_features = np.concatenate((mfccs.mean(axis=1), mfccs.std(axis=1)))
 ```
+![Librosa](https://librosa.org/doc/main/_images/librosa-feature-mfcc-1_00.png)
+
+
 #### Cromagrama  
 Extrae la intensidad de los tonos musicasles a lo largo de la señal de audio.  
 
