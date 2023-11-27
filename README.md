@@ -33,7 +33,7 @@ El preprocesamiento de la data se realizó en un código aparte, llamado ```toke
 `clean_and_tokenize`: Es una función que realiza la limpieza y tokenización del texto.
 - Limpia el texto eliminando caracteres no alfanuméricos y convirtiéndolo a minúsculas.
 - Utiliza la biblioteca NLTK para tokenizar el texto.
-`preprocesar_textos(textos)`: es de forma muy similar a `preprocesar_query`, pero para los documentos propuestos.
+
 #### Procesamiento del Archivo CSV:
 
 - Abre un archivo CSV llamado 'new_spotify.csv'.
@@ -47,6 +47,22 @@ El preprocesamiento de la data se realizó en un código aparte, llamado ```toke
 #### Guardado en Formato JSON:
 - Guarda los datos procesados en archivos JSON separados para cada idioma.
 - Los archivos JSON se guardan con el nombre 'archivo_procesado.json' en carpetas separadas para cada idioma.
+
+### Construcción del indice invertido
+Para esta funcion
+`Función spimi_invert_from_json` : Esta función toma un archivo JSON que contiene datos procesados de pistas de música y crea bloques temporales de un tamaño máximo determinado. Cada bloque contiene un índice invertido parcial, donde los términos están asociados con los documentos (ID de pista) en los que aparecen. Los bloques temporales se guardan en archivos JSON separados en un directorio temporal.
+```
+def spimi_invert_from_json(json_file, output_directory, max_block_size):
+    # ...
+    return temporary_files
+```
+Parámetros:
+
+- json_file (str): Ruta al archivo JSON que contiene los datos procesados.
+- output_directory (str): Directorio donde se guardarán los bloques temporales.
+- max_block_size (int): Tamaño máximo de los bloques temporales.
+
+`Función merge_blocks`: Esta función fusiona los bloques temporales generados por spimi_invert_from_json para construir un índice invertido completo. Los términos en el índice invertido se ordenan alfabéticamente.
 
 ### Descarga de canciones  
 La descarga de canciones se llevó a cabo mediante el uso de dos bibliotecas fundamentales: ```Spotify``` y ```spotdl```.
