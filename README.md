@@ -52,4 +52,23 @@ El tempo se refiere a la velocidad o ritmo de una composición musical.
 ```python
         tempo, tempogram = librosa.beat.beat_track(y=audio, sr=sr)
 ```
-       
+### Indexación y Búsqueda  
+
+En cuanto a la implementación de un eficiente sistema de indexación y búsqueda para recuperar rápidamente canciones similares en grandes conjuntos de datos musicales, se usaron los siguientes:  
+### KNN-Secuencial  
+El método de k-NN secuencial se basa en la búsqueda secuencial para encontrar las k canciones más cercanas a una consulta. Utiliza la distancia euclidiana entre características musicales para determinar la similitud y proporciona una solución sencilla pero efectiva para recuperar canciones similares en grandes conjuntos de datos musicales.    
+```python
+        def knn_sequential(query, k):
+    distances = []
+    for sample in data_normalized:
+        distance = euclidean_distances(query.reshape(1, -1), sample.reshape(1, -1))[0][0]
+        distances.append(distance)
+    
+    indices = np.argsort(distances)[:k]#indices de manera ascendendete
+    
+    neighbors = []
+    for index in indices:
+        neighbors.append((nombres_id[index], distances[index]))
+    
+    return neighbors
+```
