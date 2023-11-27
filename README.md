@@ -163,7 +163,34 @@ for idioma in idiomas_mapeados:
         tfidf_data[idioma][doc_id] = tfidf_values
         document_lengths[idioma][doc_id] = doc_length
 ```
+Para las consultas se ha implementado un motor de búsqueda eficiente que utiliza el esquema de similitud de coseno en combinación con TF-IDF. Este enfoque permite realizar consultas efectivas y recuperar documentos relevantes según la similitud de términos ponderados.
+```python
+def search(query, inverted_index, document_lengths, total_docs, tfidf_data):
+    query_tokens = query.split()
+    
+    query_tfidf = {term: calculate_tfidf(term, query_tokens, inverted_index, total_docs) for term in query_tokens}
+    query_length = calculate_document_length(query_tokens, inverted_index, total_docs)
 
+    # Obtener los documentos que contienen al menos uno de los términos de la consulta
+    relevant_docs = set(doc_id for term in query_tfidf for doc_id in inverted_index.get(term, {}))
+
+    cosine_scores = {}
+    for doc_id in relevant_docs:
+        score = sum(query_tfidf[term] * tfidf_data[doc_id].get(term, 0) for term in query_tfidf)
+        score /= document_lengths[doc_id] * query_length
+        cosine_scores[doc_id] = score
+
+    # Ordenar los documentos por puntaje coseno y retornar los 10 mejores, no incluir si tiene el score 0
+    results = [(doc_id, score) for doc_id, score in sorted(cosine_scores.items(), key=lambda x: x[1], reverse=True) if score > 0][:10]
+
+    return results
+```
+#### Proceso:
+    - Tokenización y cálculo de pesos TF-IDF para la consulta.
+    - Determinación de documentos relevantes.
+    - Cálculo de puntajes de similitud de coseno entre consulta y documentos.
+    - Ordenamiento descendente de documentos por puntaje.
+    - Retorno de los 10 mejores documentos, excluyendo aquellos con puntaje 0.
 ### Descarga de canciones  
 La descarga de canciones se llevó a cabo mediante el uso de dos bibliotecas fundamentales: ```Spotify``` y ```spotdl```.
 
