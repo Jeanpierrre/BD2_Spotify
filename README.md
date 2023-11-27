@@ -58,7 +58,7 @@ En cuanto a la implementación de un eficiente sistema de indexación y búsqued
 ### KNN-Secuencial  
 El método de k-NN secuencial se basa en la búsqueda secuencial para encontrar las k canciones más cercanas a una consulta. Utiliza la distancia euclidiana entre características musicales para determinar la similitud y proporciona una solución sencilla pero efectiva para recuperar canciones similares en grandes conjuntos de datos musicales.    
 ```python
-        def knn_sequential(query, k):
+def knn_sequential(query, k):
     distances = []
     for sample in data_normalized:
         distance = euclidean_distances(query.reshape(1, -1), sample.reshape(1, -1))[0][0]
@@ -71,4 +71,33 @@ El método de k-NN secuencial se basa en la búsqueda secuencial para encontrar 
         neighbors.append((nombres_id[index], distances[index]))
     
     return neighbors
+```
+### KNN con Cola de Prioridad  
+Este metodo optimiza la búsqueda de canciones similares al utilizar una estructura de datos que prioriza las comparaciones más prometedoras. En lugar de examinar exhaustivamente todas las canciones, esta implementación se centra en las más relevantes, mejorando significativamente la eficiencia del algoritmo.
+
+```python
+
+def knn_search_priority_queue(query, k):
+    similarities = cosine_similarity(query.reshape(1, -1), data_normalized).flatten()
+    priority_queue = PriorityQueue()
+    for i, sim in enumerate(similarities):
+        priority_queue.put((-sim, nombres_id[i])) 
+    neighbors = []
+    for _ in range(k):
+        sim, neighbor = priority_queue.get()
+        neighbors.append((neighbor, -sim))
+    return neighbors
+```
+### KNN Range Search
+Implica identificar todas las canciones dentro de un rango predefinido con respecto a una canción de consulta. En lugar de limitarse a un número específico de vecinos más cercanos, este enfoque permite recuperar un conjunto más amplio de canciones que comparten similitudes específicas con la canción de interés.
+
+```python
+def knn_range_search(query, radio):
+    vecinos_en_radio = []
+    for i, sample in enumerate(data_normalized):
+        distancia = euclidean_distances(query.reshape(1, -1), sample.reshape(1, -1))[0][0]
+        if distancia is not None and distancia <= radio:
+            vecinos_en_radio.append((nombres_id[i], distancia))
+    vecinos_en_radio = sorted(vecinos_en_radio, key=lambda x: x[1])
+    return vecinos_en_radio
 ```
