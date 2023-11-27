@@ -49,9 +49,10 @@ El preprocesamiento de la data se realizó en un código aparte, llamado ```toke
 - Los archivos JSON se guardan con el nombre 'archivo_procesado.json' en carpetas separadas para cada idioma.
 
 ### Construcción del indice invertido
-Para esta funcion
-`Función spimi_invert_from_json` : Esta función toma un archivo JSON que contiene datos procesados de pistas de música y crea bloques temporales de un tamaño máximo determinado. Cada bloque contiene un índice invertido parcial, donde los términos están asociados con los documentos (ID de pista) en los que aparecen. Los bloques temporales se guardan en archivos JSON separados en un directorio temporal.
-```
+Para esta funcion usamos el algoritmo visto en clase para la creacion de indice invertido en memoria secundaria:
+![Mi Imagen](fotos/spimi.png)
+`spimi_invert_from_json` : Esta función toma un archivo JSON que contiene datos procesados de pistas de música y crea bloques temporales de un tamaño máximo determinado. Cada bloque contiene un índice invertido parcial, donde los términos están asociados con los documentos (ID de pista) en los que aparecen. Los bloques temporales se guardan en archivos JSON separados en un directorio temporal.
+```python
 def spimi_invert_from_json(json_file, output_directory, max_block_size):
     # ...
     return temporary_files
@@ -63,6 +64,17 @@ Parámetros:
 - max_block_size (int): Tamaño máximo de los bloques temporales.
 
 `Función merge_blocks`: Esta función fusiona los bloques temporales generados por spimi_invert_from_json para construir un índice invertido completo. Los términos en el índice invertido se ordenan alfabéticamente.
+
+```python
+def merge_blocks(temporary_directory, output_file):
+    # ...
+```
+Acciones:
+
+- Fusiona los bloques temporales.
+- Ordena alfabéticamente los términos en el índice invertido.
+- Guarda el índice invertido completo en un archivo.
+- Limpia los archivos temporales.
 
 ### Descarga de canciones  
 La descarga de canciones se llevó a cabo mediante el uso de dos bibliotecas fundamentales: ```Spotify``` y ```spotdl```.
