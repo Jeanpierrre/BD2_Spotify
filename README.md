@@ -12,7 +12,7 @@ Juan Torres                    100%
 
 
 ### Extracción de características
-Para este proyecto, es escencial tener las caracteristicas de una canciones, ya que con esto podemos reconocer canciones parecidas gracias los siguientes caractersiticas:
+Para este proyecto, es escencial tener las caracteristicas de una canciones, ya que con esto podemos reconocer canciones parecidas gracias los siguientes caractersiticas:  
         ```python
         chroma = librosa.feature.chroma_stft(y=audio, sr=sr)
         ```
