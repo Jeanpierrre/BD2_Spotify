@@ -388,4 +388,4 @@ Por lo tanto, a fines del experimento este se realizara bajo las mismas condicio
 
 ### Conclusion y Analisis
 
-
+Este proyecto nos ha brindado la oportunidad de comprender diversas aproximaciones para llevar a cabo búsquedas en bases de datos, desde la creación de índices invertidos mediante SPIMI hasta la implementación de busqueda por similitud de canciones. Cada enfoque presenta sus propias ventajas y desventajas, y la selección dependerá de los requisitos específicos del proyecto, el tamaño del conjunto de datos y las funcionalidades necesarias. Resulta crucial evaluar las alternativas disponibles y considerar aspectos como el rendimiento, la escalabilidad y la flexibilidad para asegurar búsquedas eficientes y precisas en entornos de bases de datos.
