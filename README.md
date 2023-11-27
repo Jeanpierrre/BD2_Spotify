@@ -117,7 +117,26 @@ El tempo se refiere a la velocidad o ritmo de una composición musical.
 ```python
         tempo, tempogram = librosa.beat.beat_track(y=audio, sr=sr)
 ```
-![Librosa](https://librosa.org/doc/main/_images/librosa-beat-plp-1_00.png)
+![Librosa](https://librosa.org/doc/main/_images/librosa-beat-plp-1_00.png)  
+
+
+
+Ya con todas estas caracteristicas simplemente deberemos recorrer las canciones ya descargadas y guardar sus caractersiticas en un archivo .pkl.  
+
+```python
+def save_features_to_pickle(folder_path, output_file):
+    features = []
+    for file_name in os.listdir(folder_path):
+        if file_name.endswith(".mp3"):
+            file_path = os.path.join(folder_path, file_name)
+            song_features = extract_features(file_path)
+            features.append(song_features)
+    with open(output_file, 'wb') as file:
+        pickle.dump(features, file)
+
+folder_path = 'Musicas'
+save_features_to_pickle(folder_path,'features.pkl')
+```
 
 ### Algoritmos de búsqueda sin indexación 
 
