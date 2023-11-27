@@ -17,9 +17,36 @@ El conjunto de datos disponible en (https://www.kaggle.com/datasets/imuhammad/au
 
 Inicialmente, el conjunto de datos original fue utilizado en la tercera semana del proyecto TidyTuesday y solo comprendía características de audio y géneros. Para enriquecer la información, se agregaron las letras a través de la biblioteca Genius en R, y se incorporó el idioma de las letras utilizando la biblioteca langdetect en Python. Sin embargo, es importante tener en cuenta que aproximadamente solo la mitad de las canciones originales se encuentran disponibles en este conjunto de datos, ya que las letras no pudieron recuperarse para muchas de ellas.
 
+## Backend
+El backend fue construido utilizando el lenguaje de programación Python. Se crearon APIs y rutas específicas para cada método de indexación (en este caso, PostgreSQL y la implementación propia) basándose en la base de datos suministrada.
+### Preprocesamiento
+El preprocesamiento de la data se realizó en un código aparte, llamado ```tokenn.py```. Los procesos realizados fueron la tokenización del texto, el filtrado de las stopwords y caracteres especiales y la reducción de palabras con el método de stemming.
 
+**tokenn.py**
+#### Definición de Idiomas y Stopwords
+- Define una lista de idiomas mapeados.
+- Crea un diccionario llamado stopwords que almacena listas de stopwords para cada idioma (inglés, español, alemán, italiano y portugués).
+- Lee archivos de stopwords para cada idioma y los almacena en el diccionario stopwords.
+#### Stemming
+- Recibe una lista de tokens como entrada y elimina los stopwords. También hace un proceso de stemming utilizando "SnowballStemmer" de NLTK para reducir las palabras a su forma raíz. Devuelve una lista de tokens procesados.
+#### Limpieza y Tokenización del Texto:
+`clean_and_tokenize`: Es una función que realiza la limpieza y tokenización del texto.
+- Limpia el texto eliminando caracteres no alfanuméricos y convirtiéndolo a minúsculas.
+- Utiliza la biblioteca NLTK para tokenizar el texto.
+`preprocesar_textos(textos)`: es de forma muy similar a `preprocesar_query`, pero para los documentos propuestos.
+#### Procesamiento del Archivo CSV:
 
-
+- Abre un archivo CSV llamado 'new_spotify.csv'.
+- Itera sobre las filas del archivo y realiza las siguientes acciones para cada fila:
+    - Obtiene el ID de la fila y el idioma de la pista.
+    - Concatena los atributos textuales de la fila en una cadena.
+    - Limpia y tokeniza el texto.
+    - Elimina las stopwords del texto.
+    - Aplica stemming a los tokens.
+    - Almacena el ID de la fila y sus tokens en el diccionario data correspondiente al idioma.
+#### Guardado en Formato JSON:
+- Guarda los datos procesados en archivos JSON separados para cada idioma.
+- Los archivos JSON se guardan con el nombre 'archivo_procesado.json' en carpetas separadas para cada idioma.
 
 ### Descarga de canciones  
 La descarga de canciones se llevó a cabo mediante el uso de dos bibliotecas fundamentales: ```Spotify``` y ```spotdl```.
