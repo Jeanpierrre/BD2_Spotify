@@ -48,7 +48,7 @@ def buscar(autor, song):
 ```
 
 - Spotdl:  
-  ![Mi Imagen](fotos/spotdl.png)
+  ![Mi Imagen](fotos/spotdl.png)  
 La biblioteca ```spotdl``` fue utilizada para tomar la URL proporcionada por Spotify y realizar la descarga directa de la canción en nuestra máquina, asegurando así la disponibilidad local de las pistas musicales.
 
 ```python
