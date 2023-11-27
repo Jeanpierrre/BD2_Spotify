@@ -22,6 +22,29 @@ Inicialmente, el conjunto de datos original fue utilizado en la tercera semana d
 
 ## Backend
 El backend fue construido utilizando el lenguaje de programación Python. Se crearon APIs y rutas específicas para cada método de indexación (en este caso, PostgreSQL y la implementación propia) basándose en la base de datos suministrada.
+Para Postgresql usamos psycopg2 para hacer la conexion:
+```python
+def create_index_by_language(conn, idiomas_mapeados):
+    cur = conn.cursor()
+    cur.execute("ALTER TABLE song ADD COLUMN inverted_index tsvector;")
+    cur.execute("SELECT track_id, track_name, track_artist, lyrics, language FROM song;")
+    for row in cur.fetchall():
+        track_id, track_name, track_artist, lyrics, language = row
+        idioma_mapeado = idiomas_mapeados.get(language, 'english')
+        print("Para el lenguaje: ",language)
+        print("Se utilizo el stopword de: ", idioma_mapeado)
+        cur.execute(sql.SQL("""
+            UPDATE song
+            SET inverted_index = setweight(to_tsvector(%s, COALESCE(%s, '')), 'A') ||
+                                 setweight(to_tsvector(%s, COALESCE(%s, '')), 'B') ||
+                                 setweight(to_tsvector(%s, COALESCE(%s, '')), 'C')
+            WHERE track_id = %s;
+        """), (idioma_mapeado, track_name, idioma_mapeado, track_artist, idioma_mapeado, lyrics, track_id))
+    conn.commit()
+    cur.close()
+```
+# Crear índice invertido según el idioma de cada fila
+
 ### Preprocesamiento
 El preprocesamiento de la data se realizó en un código aparte, llamado ```tokenn.py```. Los procesos realizados fueron la tokenización del texto, el filtrado de las stopwords y caracteres especiales y la reducción de palabras con el método de stemming.
 
