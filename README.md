@@ -169,7 +169,22 @@ def knn_sequential(query, k):
     return neighbors
 ```
 
+### Rtree  
+La implementación del R-Tree se lleva a cabo después de reducir la dimensionalidad de las matrices de datos mediante el análisis de componentes principales (PCA) a 100 dimensiones.
 
+```python
+from rtree import index
+p = index.Property()
+p.dimension = 100
+p.buffering_capacity = 8
+idx = index.Index(properties=p)
+
+for i, sample in enumerate(matrices_reduced):
+    idx.insert(i, sample)
+    #print("insertando",i)
+
+nearest_neighbors_indices = list(idx.nearest((matrices_reduced[3481]), 5)) # 5 vecinos más cercanos a la canción 3481
+```
 ### Faiss(HNSWFlat)  
 
 La implementacion de HNSWFlat en la clase faiis, es un algoritmo de búsqueda de vecinos similares que se basa en la idea de crear una estructura jerárquica para organizar eficientemente los vectores característicos en un espacio métrico de alta dimensión. Funciona mediante la construcción de un grafo de conexión, donde cada nodo se conecta con un número fijo de vecinos cercanos, facilitando la exploración de regiones similares. La estructura jerárquica permite realizar búsquedas rápidas, ya que se pueden saltar entre niveles para reducir el espacio de búsqueda. El algoritmo consta de 3 partes importantes:   
