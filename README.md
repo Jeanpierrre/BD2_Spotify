@@ -28,5 +28,28 @@ Se calculan 20 coeficientes de MFCC a partir de la señal de audio, estos sirven
 ```python
         chroma = librosa.feature.chroma_stft(y=audio, sr=sr)
 ```
-        
+#### Cromagrama  
+Extrae la intensidad de los tonos musicasles a lo largo de la señal de audio.  
+
+```python
+        chroma = librosa.feature.chroma_stft(y=audio, sr=sr)
+```
+
+### Contraste Espectral  
+Es una medida que destaca las regiones en una señal de audio que tienen una diferencia significativa en cuanto a energía espectral.  
+
+```python
+        contrast = librosa.feature.spectral_contrast(y=audio, sr=sr)
+```
+### Tonal Centroid Features  
+Proporciona información sobre la estructura tonal y armónica de una pieza musical.
+```python
+            tonnetz = librosa.feature.tonnetz(y=audio, sr=sr)
+```
+
+### Tempo y Tempograma  
+El tempo se refiere a la velocidad o ritmo de una composición musical.  
+```python
+        tempo, tempogram = librosa.beat.beat_track(y=audio, sr=sr)
+```
        
