@@ -22,10 +22,44 @@ Inicialmente, el conjunto de datos original fue utilizado en la tercera semana d
 
 
 ### Descarga de canciones  
-Para descargar las canciones nos ayudamos del csv, en especial del ```python track_name ``` y ```python track_artist ```
+La descarga de canciones se llevó a cabo mediante el uso de dos bibliotecas fundamentales: ```Spotify``` y ```spotdl```.
+
+- Spotify:
+![Mi Imagen](fotos/api.png)
 
 
+Esta biblioteca se encargó de utilizar los datos disponibles en nuestro conjunto, específicamente, el nombre de la canción ```(track_name)``` y el artista ```(track_artist)```. A partir de esta información, se generó una URL directa a Spotify para la canción correspondiente. Se creo la siguiente funcion para ese fin:
+```python
 
+def buscar(autor, song):
+    autor = autor.upper()
+    if len(autor) > 0:
+        sp = spotipy.Spotify(client_credentials_manager=SpotifyClientCredentials(client_id, client_secret))
+        query = f"{song} {autor}"  #trae la cancion exacta del artista
+        result = sp.search(query, type='track', limit=1)  
+        if result['tracks']['items']:
+            track_uri = result['tracks']['items'][0]['external_urls']['spotify']
+            return track_uri
+        else:
+            print("No se encontró la canción en Spotify.")
+    else:
+        print("El nombre del artista está vacío.")
+```
+
+- Spotdl:
+  ![Mi Imagen](fotos/spotdl.png)
+La biblioteca ```spotdl``` fue utilizada para tomar la URL proporcionada por Spotify y realizar la descarga directa de la canción en nuestra máquina, asegurando así la disponibilidad local de las pistas musicales.
+
+```python
+def descargar(artista,name):
+    spotify_track_url = buscar(artista,name)
+    comando_spotdl = f"spotdl {spotify_track_url}"
+    try:
+        output = subprocess.check_output(comando_spotdl, shell=True, text=True)
+        print(output)
+    except subprocess.CalledProcessError as e:
+        print("Error al descargar la pista:", e)
+```
 
 
 
@@ -33,7 +67,7 @@ Para descargar las canciones nos ayudamos del csv, en especial del ```python tra
 
 ### Extracción de características
 Hay muchas formas de extraer caracteristicas de canciones, se pueden usar modelos que automaticamente te sacan un numero predefinido de caracteristicas como lo son la Api de Spotify y openL3.  
-![Mi Imagen](fotos/image.png)
+![Mi Imagen](fotos/formas.png)
 
 Sin embargo, para esta ocacion usaremos librosa, ya que nos permite extraer un conjunto muy alto de caracteristicas dependiendo de nuestras necesidades.  
 ![Mi Imagen](fotos/librosa.png)
