@@ -376,6 +376,8 @@ El problema de Rtree se agrava cuando se enfrenta a conjuntos de datos de alta d
 
 Por lo tanto, a fines del experimento este se realizara bajo las mismas condiciones de data redimensionada para todos los algoritmos.  
 
+### Analisis
+![Mi Imagen](fotos/exectime.png)
 
 ### Resultados  
 | N     | Seq   | Rtree | HighD |
