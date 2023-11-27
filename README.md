@@ -108,6 +108,15 @@ Como el arbol Rtree no es optimo para tantas dimensiones, en el contexto de la i
 Por lo tanto, a fines del experimento este se realizara bajo las mismas condiciones de data redimensionada para todos los algoritmos.  
 
 
+### Resultados  
+| N     | Seq   | Rtree | HighD |
+| ----- | ----- | ----- | ----- |
+| 1000  | 0.29 |  1| 0.000 |
+| 2000  | 0.74 | 1 | 0.000 |
+| 3000  | 1.05 | 1 | 0.002 |
+| 4000  | 1.07 | 1 | 0.000 |
+| 5000  | 1.73 | 1 | 0.01 |
 
+### Conclusion y Analisis
 
 
