@@ -75,6 +75,21 @@ Acciones:
 - Ordena alfabéticamente los términos en el índice invertido.
 - Guarda el índice invertido completo en un archivo.
 - Limpia los archivos temporales.
+## Consulta/Búsqueda
+Para realizar las consultas tenemos que tener guardado el tf/idf y la norma del documento que sera el document_lenght.
+Todas estas funciones se encuentra en `calcular.py`.
+
+#### Procedimiento:
+- Carga del Índice Invertido:
+    - Se carga el índice invertido preexistente desde el archivo JSON 'indice_invertido.json'.
+- Carga de Datos de Documentos y Tokens:  
+    - Se recopilan datos estructurados de documentos y sus correspondientes tokens desde el archivo JSON 'archivo_procesado.json'.
+- Cálculo de TF-IDF y Longitudes de Documentos:  
+    - Para cada documento, se calculan los pesos TF-IDF y las longitudes respectivas.
+    - Los cálculos se realizan considerando el índice invertido previamente cargado.
+- Almacenamiento de Resultados:
+    - Los valores calculados de TF-IDF se guardan en el archivo JSON 'tfidf_data.json' con un formato estructurado y legible.
+    - Las longitudes de los documentos se almacenan en el archivo JSON 'document_lengths.json', proporcionando una referencia rápida para futuros análisis.
 
 ### Descarga de canciones  
 La descarga de canciones se llevó a cabo mediante el uso de dos bibliotecas fundamentales: ```Spotify``` y ```spotdl```.
