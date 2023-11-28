@@ -474,12 +474,55 @@ La implementacion de HNSWFlat en la clase faiis, es un algoritmo de búsqueda de
 ![Mi Imagen](fotos/Faiss_.PNG)
 ![Mi Imagen](fotos/Union.PNG)
 Se organiza los datos en capas jerárquicas de un espacio de características, facilitando la búsqueda eficiente de vecinos cercanos en espacios de alta dimensión.
-![Faiss](https://miro.medium.com/v2/resize:fit:1400/1*ziU6_KIDqfmaDXKA1cMa8w.png)
+![Faiss](https://miro.medium.com/v2/resize:fit:1400/1*ziU6_KIDqfmaDXKA1cMa8w.png)  
+
+
+### Creacion del indice y funcion para la busqueda
+En este caso, se establecen 32 vecinos para cada cancion, usamos distancia eulediana para sacar los "vecinos optimos" a los cuales unirse.  
+```python
+
+def train_index_HNSWFlat(data):
+    # Inicializa el índice de FAISS con HNSW (Hierarchical Navigable Small World)
+    M = 32  # Número de vecinos en la lista de entrada
+    efConstruction = 100  # Explorar al construir canciones mientras mayor es mejor la precision y mas demora
+    dimension = data_normalized.shape[1]   # Dimensión de tus características
+    quantizer = faiss.IndexHNSWFlat(dimension, M, faiss.METRIC_L2) #Distancia eulediana
+    quantizer.hnsw.efConstruction = efConstruction
+    index = quantizer
+    index.add(data)
+    return index
+
+def knn_faiss_HNSWFlat(indice, query_object, k):
+    distances, indices = indice.search(np.expand_dims(query_object, axis=0), k)
+    resultados = []
+    for i in range(k):
+        distancia = distances[0][i]
+        etiqueta = nombres_id[indices[0][i]]
+        resultados.append((distancia, etiqueta))
+    return resultados
+
+# Entrenamiento con IndexHNSWFlat
+index_train = train_index_HNSWFlat(data_normalized)
+```
+
+
+
+
+
+
+
+
+
+
 
   
 
 Desventajas:  
 - La desventaja mas notoria que se encontro, es que para un gran conjunto de datos la construccion de este indice tienen un consumo significativo de recursos, especialmente en términos de memoria. Mas que todo una limitacion para entornos limitados como por ejemplo maquinas virtuales.
+
+
+
+
 
 
 ### Interfaz visual
