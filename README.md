@@ -374,8 +374,31 @@ El tempo se refiere a la velocidad o ritmo de una composición musical.
 ```python
         tempo, tempogram = librosa.beat.beat_track(y=audio, sr=sr)
 ```
-![Librosa](https://librosa.org/doc/main/_images/librosa-beat-plp-1_00.png)  
+![Librosa](https://librosa.org/doc/main/_images/librosa-beat-plp-1_00.png)   
+Definimos como maximo 1000 dimensiones, ya que segun un calculo del promedio es la cantidad mas acertada para todos.  
+Concatenamos todas las caracteristicas previas y en caso de no llenar a 1000 lo relleno con 0, si se pasa simplemente la recorto. Este recorte se puede considerar "malo", sin embargo, como el recorte no sobrepasa ni el 10% de la dimension total entonces es valido para estos casos.
 
+
+```python
+    all_features = np.concatenate((
+        mfcc_features,
+        delta_mfcc_features,
+        delta2_mfcc_features,
+        chroma.mean(axis=1),
+        contrast.mean(axis=1),
+        tonnetz.mean(axis=1),
+        tempogram
+    ))
+
+    # Validar que tenga 1000 siempre
+    if len(all_features) < max_length:
+        all_features = np.pad(all_features, (0, max_length - len(all_features)))
+    else:
+        # Recortar 
+        all_features = all_features[:max_length]
+
+    return all_features
+```
 
 
 Ya con todas estas caracteristicas simplemente deberemos recorrer las canciones ya descargadas y guardar sus caractersiticas en un archivo .pkl.  
