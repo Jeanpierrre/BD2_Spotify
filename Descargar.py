@@ -18,6 +18,7 @@ directorio_original = os.getcwd()
 #estas son mis creedenciales, no se cuanto duren xDDDDD
 client_id = "3f54e3fbacdc45d3bedabd32238802e8"
 client_secret = "e5c73a13fc0c47efb49c7bb054f0383b"
+#funcion encargada de traer el url de la cancion en base al nombre de esta misma y su artista
 def buscar(autor, song):
     autor = autor.upper()
     if len(autor) > 0:
@@ -39,7 +40,7 @@ def buscar(autor, song):
 
 
 import subprocess
-
+#con ese url gracias a la libreria de spotdl(pirata(?)) podemos descargar la cancion en su calidad mas baja, que viene a ser .mp3 128kbps
 def descargar(artista,name):
     #name='SPECIALZ'
     #artistas='King Gnu'
@@ -55,7 +56,7 @@ def descargar(artista,name):
         print("Error al descargar la pista:", e)
 
 
-
+#Descargar las primeras 5000 canciones del csv
 with open('new_spotify.csv', 'r', encoding='utf-8') as csv_file:
     csv_reader = csv.DictReader(csv_file)
 
