@@ -539,6 +539,14 @@ Creamos una interfaz amigable al usuario que le permitirá realizar todo tipo de
 
 Observamos los datos más relevantes de las canciones a forma de tabla, y de un conjunto de opciones donde el usuario podrá redigirise a la página oficial de Spotify donde la canción se buscará de forma automática para que el usuario pueda interactuar con esta en su cuenta personal de Spotify. Además, también se carga una salida de audio para que el usuario pueda escuchar esta sin tener que salir de nuestra página.
 
+Junto con mostrar la canción segun la query, el método (Index - PSQL) y el idioma, el usuario, al momento de dar Click en "Listen on Spotify" o reproducir, podrá observar las canciones más parecidas según todos los métodos solicitados e implementados y poder escucharlas (__KNN-ByPriorityQueue / KNN-ByRange / KNN-Sequential / KNN-RTree / KNN-HighD__)
+
+![Mi Imagen](rm_assets/range.png)
+
+![Mi Imagen](rm_assets/rtree.png)
+
+![Mi Imagen](rm_assets/highd.png)
+
 ## Experimento
 
 #### El problema de Rtree  
