@@ -175,7 +175,15 @@ Parámetros:
 - output_directory (str): Directorio donde se guardarán los bloques temporales.
 - max_block_size (int): Tamaño máximo de los bloques temporales.
 
+#### Bloques temporales despues de ejecutar `spimi_invert_from_json` con la data del csv fashion.
+
+![bloques temporales generados](fotos/bloques.png "bloques temporales generados")
+
+
 `Función merge_blocks`: Esta función fusiona los bloques temporales generados por spimi_invert_from_json para construir un índice invertido completo. Los términos en el índice invertido se ordenan alfabéticamente.
+
+
+
 
 ```python
 def merge_blocks(temporary_directory, output_file):
