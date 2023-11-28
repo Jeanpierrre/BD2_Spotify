@@ -230,7 +230,8 @@ Acciones:
 - Guarda el índice invertido completo en un archivo.
 - Limpia los archivos temporales.
 
-## Consulta/Búsqueda
+## Consulta y Búsqueda
+
 Para realizar las consultas tenemos que tener guardado el tf/idf y la norma del documento que sera el document_lenght.
 Todas estas funciones se encuentra en `calcular.py`.
 
@@ -277,6 +278,7 @@ for idioma in idiomas_mapeados:
         document_lengths[idioma][doc_id] = doc_length
 ```
 Para las consultas se ha implementado un motor de búsqueda eficiente que utiliza el esquema de similitud de coseno en combinación con TF-IDF. Este enfoque permite realizar consultas efectivas y recuperar documentos relevantes según la similitud de términos ponderados.
+
 ```python
 def search(query, inverted_index, document_lengths, total_docs, tfidf_data, topk):
     topk = int(topk)
@@ -299,7 +301,8 @@ def search(query, inverted_index, document_lengths, total_docs, tfidf_data, topk
 
     return results
 ```
-#### Proceso:
+
+## Resumen - Proceso general de método:
     - Tokenización y cálculo de pesos TF-IDF para la consulta.
     - Determinación de documentos relevantes.
     - Cálculo de puntajes de similitud de coseno entre consulta y documentos.
@@ -352,6 +355,7 @@ def descargar(artista,name):
 Utiliza la URL de Spotify obtenida mediante la función ```buscar``` y emplea la biblioteca ```spotdl``` para descargar la canción en la máquina local.
 
 ## Extracción de características
+
 Hay muchas formas de extraer caracteristicas de canciones, se pueden usar modelos que automaticamente te sacan un numero predefinido de caracteristicas como lo son la Api de Spotify y openL3.  
 
 ![Mi Imagen](rm_assets/for.png)
@@ -424,7 +428,6 @@ Concatenamos todas las caracteristicas previas y en caso de no llenar a 1000 lo 
 
     return all_features
 ```
-
 
 Ya con todas estas caracteristicas simplemente deberemos recorrer las canciones ya descargadas y guardar sus caractersiticas en un archivo .pkl.  
 
@@ -533,11 +536,18 @@ def knn_faiss_HNSWFlat(indice, query_object, k):
 index_train = train_index_HNSWFlat(data_normalized)
 ```
 
-Desventajas:  
+__Desventajas:__
+
 - La desventaja mas notoria que se encontro, es que para un gran conjunto de datos la construccion de este indice tienen un consumo significativo de recursos, especialmente en términos de memoria. Mas que todo una limitacion para entornos limitados como por ejemplo maquinas virtuales.
 
 ## FrontEnd - Interfaz visual
-Creamos una interfaz amigable al usuario que le permitirá realizar todo tipo de busquedas en  tanto la data relacionada a vestimenta, Fashion; y, sobre nuestra data de canciones, esto con tan solo un conjunto de palabras y un valor TopK a recuperar.
+
+### Herramientas de diseño:
+- Flask
+- HTML + CSS
+- JavaScript (AJAX & jQuery)
+
+Creamos una interfaz amigable al usuario que le permitirá realizar todo tipo de busquedas en  tanto la data relacionada a vestimenta, Fashion; y, sobre nuestra data de canciones, esto con tan solo un conjunto de palabras y un valor TopK a recuperar. Así mismo, el usuario podrá elegir entre utilizar nuestro algoritmo de indexación o la opción de PSQL.
 
 ### Fashion Dataset
 ![Mi Imagen](rm_assets/front.png)
@@ -577,6 +587,7 @@ matrices_reduced = pca.fit_transform(data_normalized)
 Por lo tanto, a fines del experimento este se realizara bajo las mismas condiciones de data redimensionada para todos los algoritmos.  
 
 ## Analisis
+
 ![Mi Imagen](rm_assets/exectime.png)
 
 ### Resultados  
