@@ -134,7 +134,9 @@ for idioma,datos in data.items():
 ## Construcción del indice invertido
 
 Para esta funcion usamos el algoritmo visto en clase para la creacion de indice invertido en memoria secundaria:
+
 ![Mi Imagen](rm_assets/spimi.png)
+
 `spimi_invert_from_json` : Esta función toma un archivo JSON que contiene datos procesados de pistas de música y crea bloques temporales de un tamaño máximo determinado. Cada bloque contiene un índice invertido parcial, donde los términos están asociados con los documentos (ID de pista) en los que aparecen. Los bloques temporales se guardan en archivos JSON separados en un directorio temporal.
 ```python
 def spimi_invert_from_json(json_file, output_directory, max_block_size):
@@ -351,9 +353,11 @@ Utiliza la URL de Spotify obtenida mediante la función ```buscar``` y emplea la
 
 ## Extracción de características
 Hay muchas formas de extraer caracteristicas de canciones, se pueden usar modelos que automaticamente te sacan un numero predefinido de caracteristicas como lo son la Api de Spotify y openL3.  
+
 ![Mi Imagen](rm_assets/for.png)
 
-Sin embargo, para esta ocacion usaremos librosa, ya que nos permite extraer un conjunto muy alto de caracteristicas dependiendo de nuestras necesidades. Algo muy importante en este proyecto, ya que asi tendremos mejores busquedas.   
+Sin embargo, para esta ocacion usaremos librosa, ya que nos permite extraer un conjunto muy alto de caracteristicas dependiendo de nuestras necesidades. Algo muy importante en este proyecto, ya que asi tendremos mejores busquedas.
+
 ![Mi Imagen](rm_assets/librosa.png)
   
 #### MFCC (Coeficientes Cepstrales de Frecuencia Mel)  
@@ -364,6 +368,7 @@ Se calculan 20 coeficientes de MFCC a partir de la señal de audio, estos sirven
     mfccs = librosa.feature.mfcc(y=audio, sr=sr, n_mfcc=20)
     mfcc_features = np.concatenate((mfccs.mean(axis=1), mfccs.std(axis=1)))
 ```
+
 ![Librosa](https://librosa.org/doc/main/_images/librosa-feature-mfcc-1_00.png)
 
 
@@ -493,8 +498,11 @@ La implementacion de HNSWFlat en la clase faiis, es un algoritmo de búsqueda de
 - Los nodos en capas superiores representan grupos más amplios, permitiendo una búsqueda más rápida en el espacio métrico al reducir el espacio de búsqueda antes de descender a capas inferiores para obtener detalles más específicos.  
  
 ![Mi Imagen](rm_assets/Faiss_.PNG)
+
 ![Mi Imagen](rm_assets/Union.PNG)
+
 Se organiza los datos en capas jerárquicas de un espacio de características, facilitando la búsqueda eficiente de vecinos cercanos en espacios de alta dimensión.
+
 ![Faiss](https://miro.medium.com/v2/resize:fit:1400/1*ziU6_KIDqfmaDXKA1cMa8w.png)  
 
 #### Creacion del indice y funcion para la busqueda

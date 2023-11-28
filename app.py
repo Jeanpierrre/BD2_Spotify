@@ -7,6 +7,7 @@ from Spotify.stfy_search import online_search
 from Spotify.use_characteristics import search_id_characteristics, extract_normalized, knn_search_priority_queue, knn_range_search, knn_sequential, knn_rtree, find_for_rtree, init_rtree, knn_faiss_HNSWFlat
 import csv
 import re
+import time
 # import eyed3
 
 app = Flask(__name__)
@@ -60,68 +61,6 @@ def extraer_caratula(ruta_archivo):
         print(f"Carátula extraída y guardada como caratula.{tipo_imagen.split('/')[1]}")
     else: 
         print("No se encontró información de carátula en el archivo.")
-"""
-        
-"""
-@app.route("/", methods=['GET', 'POST'])
-def main_query():
-    product_names = []
-    product_ids = []
-    
-    time = None
-    gallery_links = None
-    gallery_data = None
-
-    search_option = ""
-    active_section = ""
-    # is_clothes = True
-
-    if request.method == 'POST':
-        active_section = request.form['active_section']
-        print(active_section)
-
-    if request.method == 'POST' and active_section == 'clothSearch':
-        user_input = request.form['input_text']
-        search_option = request.form['search_option']
-
-        if search_option == "Our_index":
-            product_names, product_ids, time = for_user_index(user_input)
-            print(f"User search - {user_input}, Search option - {search_option}")
-        else:
-            product_names, product_ids, time = for_user_sql(user_input)
-            print(f"User search - {user_input}, Search option - {search_option}")
-
-        # Obtener links de csv y hacer match según resultado de busqueda
-        query_links = get_links("images.csv")
-        gallery_links = [query_links.get(id, '') for id in product_ids]
-
-        # gallery_data = zip(gallery_links, product_names)
-        if gallery_links is not None and product_names is not None:
-            gallery_data = zip(gallery_links, product_names)
-        else:
-            gallery_data = []
-        
-    elif request.method == 'POST' and active_section == 'songSearch':
-        user_input = request.form['input_text']
-        search_option = request.form['search-option-songs']
-        language = request.form['language-option']
-        
-        if language == "Language":
-            print("None")
-        else:
-            if search_option == "Our_index":
-                datos = cargar_datos()
-                product_names, time = for_user(user_input, language, datos)
-                print(f"User search - {user_input}, Search option - {search_option}, Language - {language}")
-            else:
-                product_names, time = for_user_spotify_sql(user_input, language)
-                print(f"User search - {user_input}, Search option - {search_option}, Language - {language}")
-
-        app.config['time_g'] = time
-        app.config['product_names_g'] = product_names
-        return render_template('song_search.html', gallery_data=gallery_data, time=time, product_names=product_names)
-
-    return render_template('index.html', gallery_data=gallery_data, time=time)
 """
 
 @app.route("/", methods=['GET', 'POST'])
@@ -257,17 +196,20 @@ def listen_to_track():
 # Doing algorithms for nearest data
 @app.route("/table_for_knn_priority_queue", methods=['POST'])
 def for_knn_priority_queue():
+    option = "KNN-ByPriorityQueue"
     k = int(request.form.get('quantity'))
 
     track_id = request.form.get('track_id')
     pos = search_id_characteristics(track_id)
     
     if pos is not None:
+        s = time.time()
         vt = extract_normalized(pos)
 
         out = knn_search_priority_queue(vt, k);
+        f = time.time()
 
-        tabla_html = "<table><thead><tr><th>Track Name</th><th>Track Artist</th><th>Similarity</th><th>Player</th></tr></thead><tbody>"
+        tabla_html = f"<h2>{option}</h2><table><thead><tr><th>Track Name</th><th>Track Artist</th><th>Similarity</th><th>Player</th></tr></thead><tbody>"
 
         for i, data in out:
             aux = get_track_name(i[:-5])
@@ -278,7 +220,7 @@ def for_knn_priority_queue():
             # tabla_html += f"<tr><td>{aux}</td><td>{artist}</td><td>{sim}</td></tr>"
             tabla_html += f"<tr><td>{aux}</td><td>{artist}</td><td>{sim}</td><td><audio controls><source src='{audio_path}' type='audio/mp3'></audio></td></tr>"
 
-        tabla_html += "</tbody></table>"
+        tabla_html += f"</tbody></table><br></br><h2>Tiempo de ejecución: {round(f-s, 6)}</h2>"
 
         return tabla_html
     else:
@@ -286,17 +228,20 @@ def for_knn_priority_queue():
 
 @app.route("/table_for_range_search", methods=['POST'])
 def for_knn_by_range():
+    option = "KNN-ByRange"
     k = int(request.form.get('quantity'))
 
     track_id = request.form.get('track_id')
     pos = search_id_characteristics(track_id)
 
     if pos is not None:
+        s = time.time()
         vt = extract_normalized(pos)
 
         out = knn_range_search(vt, k);
+        f = time.time()
 
-        tabla_html = "<table><thead><tr><th>Track Name</th><th>Track Artist</th><th>Similarity</th></tr></thead><tbody>"
+        tabla_html = f"<h2>{option}</h2><table><thead><tr><th>Track Name</th><th>Track Artist</th><th>Similarity</th><th>Player</th></tr></thead><tbody>"
 
         for i, data in out:
             aux = get_track_name(i[:-5])
@@ -307,7 +252,7 @@ def for_knn_by_range():
             # tabla_html += f"<tr><td>{aux}</td><td>{artist}</td><td>{sim}</td></tr>"
             tabla_html += f"<tr><td>{aux}</td><td>{artist}</td><td>{sim}</td><td><audio controls><source src='{audio_path}' type='audio/mp3'></audio></td></tr>"
 
-        tabla_html += "</tbody></table>"
+        tabla_html += f"</tbody></table><br></br><h2>Tiempo de ejecución: {round(f-s, 6)}</h2>"
 
         return tabla_html
     else:
@@ -315,17 +260,20 @@ def for_knn_by_range():
 
 @app.route("/table_for_knn_sequential", methods=['POST'])
 def for_knn_sequential():
+    option = "KNN-Sequential"
     k = int(request.form.get('quantity'))
 
     track_id = request.form.get('track_id')
     pos = search_id_characteristics(track_id)
 
     if pos is not None:
+        s = time.time()
         vt = extract_normalized(pos)
 
         out = knn_sequential(vt, k);
+        f = time.time()
 
-        tabla_html = "<table><thead><tr><th>Track Name</th><th>Track Artist</th><th>Similarity</th></tr></thead><tbody>"
+        tabla_html = f"<h2>{option}</h2><table><thead><tr><th>Track Name</th><th>Track Artist</th><th>Similarity</th><th>Player</th></tr></thead><tbody>"
 
         for i, data in out:
             aux = get_track_name(i[:-5])
@@ -336,7 +284,7 @@ def for_knn_sequential():
             # tabla_html += f"<tr><td>{aux}</td><td>{artist}</td><td>{sim}</td></tr>"
             tabla_html += f"<tr><td>{aux}</td><td>{artist}</td><td>{sim}</td><td><audio controls><source src='{audio_path}' type='audio/mp3'></audio></td></tr>"
 
-        tabla_html += "</tbody></table>"
+        tabla_html += f"</tbody></table><br></br><h2>Tiempo de ejecución: {round(f-s, 6)}</h2>"
 
         return tabla_html
     else:
@@ -344,15 +292,19 @@ def for_knn_sequential():
 
 @app.route("/table_for_knn_rtree", methods=['POST'])
 def for_knn_rtree():
+    option = "KNN-RTree"
     k = int(request.form.get('quantity'))
     track_id = request.form.get('track_id')
     pos = search_id_characteristics(track_id)
 
     if pos is not None:
+        s = time.time()
+
         out = knn_rtree(pos, k)
         out_f = find_for_rtree(out)
+        f = time.time()
 
-        tabla_html = "<table><thead><tr><th>Track Name</th></tr></thead><tbody>"
+        tabla_html = f"<h2>{option}</h2><table><thead><tr><th>Track Name</th><th>Track Artist</th><th>Player</th></tr></thead><tbody>"
 
         for i in out_f:
             aux = get_track_name(i[:-5])
@@ -362,7 +314,7 @@ def for_knn_rtree():
             # tabla_html += f"<tr><td>{aux}</td><td>{artist}</td></tr>"
             tabla_html += f"<tr><td>{aux}</td><td>{artist}</td><td><audio controls><source src='{audio_path}' type='audio/mp3'></audio></td></tr>"
         
-        tabla_html += "</tbody></table>"
+        tabla_html += f"</tbody></table><br></br><h2>Tiempo de ejecución: {round(f-s, 6)}</h2>"
 
         return tabla_html
     else:
@@ -370,16 +322,19 @@ def for_knn_rtree():
 
 @app.route("/table_for_knn_highd", methods=['POST'])
 def for_knn_highd():
+    option = "KNN-HighD by HNSWFlat"
     k = int(request.form.get('quantity'))
     track_id = request.form.get('track_id')
 
     pos = search_id_characteristics(track_id)
 
     if pos is not None:
+        s = time.time()
         vt = extract_normalized(pos)
-        out = knn_faiss_HNSWFlat(vt, k);
+        out = knn_faiss_HNSWFlat(vt, k)
+        f = time.time()
 
-        tabla_html = "<table><thead><tr><th>Track Name</th><th>Track Artist</th><th>Similarity</th></tr></thead><tbody>"
+        tabla_html = f"<h2>{option}</h2><table><thead><tr><th>Track Name</th><th>Track Artist</th><th>Similarity</th><th>Player</th></tr></thead><tbody>"
 
         for data, i in out:
             aux = get_track_name(i[:-5])
@@ -390,7 +345,7 @@ def for_knn_highd():
             # tabla_html += f"<tr><td>{aux}</td><td>{artist}</td><td>{sim}</td></tr>"
             tabla_html += f"<tr><td>{aux}</td><td>{artist}</td><td>{sim}</td><td><audio controls><source src='{audio_path}' type='audio/mp3'></audio></td></tr>"
 
-        tabla_html += "</tbody></table>"
+        tabla_html += f"</tbody></table><br></br><h2>Tiempo de ejecución: {round(f-s, 6)}</h2>"
 
         return tabla_html
     else:
@@ -398,5 +353,5 @@ def for_knn_highd():
 
 if __name__ == "__main__":
     # For Rtree
-    # init_rtree()
+    init_rtree()
     app.run(debug=True)
