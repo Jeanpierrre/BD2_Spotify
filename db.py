@@ -1,15 +1,12 @@
+import time
 import psycopg2
 from psycopg2 import sql
 import pandas as pd
 from dotenv import load_dotenv
-import os
-import time
-#.env
-from dotenv import load_dotenv
 load_dotenv()
 
 """
-PRIEMRP CREA LA BD LLAMADA Spotify en PGADMIN
+PRIMERO CREA LA BD LLAMADA Spotify en PGADMIN
 CAMBIA LAS CREDENCIALES SEA EL CASO
 HOST="localhost"
 PORT="5432"
@@ -18,16 +15,17 @@ USER="postgres"
 PASSWORD=""
 """
 
-
 """
 print("HOST:", os.getenv("HOST"))
 print("PORT:", os.getenv("PORT"))
 print("DBNAME:", os.getenv("DBNAME"))
 print("USER:", os.getenv("USER"))
-print("PASSWORD:", os.getenv("PASSWORD"))"""
+print("PASSWORD:", os.getenv("PASSWORD"))
+"""
 
 def conectar_bd():
     # Establecer la conexión a la base de datos PostgreSQL
+    """
     conn = psycopg2.connect(
         host=os.getenv("HOST"),
         port=os.getenv("PORT"),
@@ -35,11 +33,13 @@ def conectar_bd():
         user=os.getenv("USER"),
         password=os.getenv("PASSWORD")
     )
+    """
+    #conn = psycopg2.connect(dbname='spotify', user='postgres', host='localhost', password='1234')
+    conn = psycopg2.connect(dbname='Spotify', user='postgres', host='localhost', password='jean')
     print("Conectado a la base de datos:", conn.dsn)
     return conn
 
 def crear_tabla(tabla,conn):
-    
     cur = conn.cursor()
     create_table_query = f"""
     CREATE TABLE IF NOT EXISTS {tabla} (
@@ -72,7 +72,6 @@ def crear_tabla(tabla,conn):
     """
     # Ejecutar la consulta 
     cur.execute(create_table_query)
-
     # Gruardar cambios
     conn.commit()
     #cerrar cursor
@@ -81,11 +80,9 @@ def crear_tabla(tabla,conn):
 
 def insertar_datos(conn, csv_file_path):
     cur = conn.cursor()
-
     # Leer el archivo CSV usando pandas
     df = pd.read_csv(csv_file_path)
-
-    #iterar en el csv
+    # Iterar en el csv
     for _, row in df.iterrows():
         # insertar
         insert_query = """
@@ -93,27 +90,8 @@ def insertar_datos(conn, csv_file_path):
         """
         # Ejecutar la consulta de inserción
         cur.execute(insert_query, tuple(row))#tienen las mismas columnas
-
     conn.commit()
     cur.close()
-
-def main():
-    # Conectar a la bd
-    conn = conectar_bd()
-
-    # crear tabla
-    tabla="song"
-    crear_tabla(tabla,conn)
-
-
-    csv_file_path = 'new_spotify.csv'  
-
-    insertar_datos(conn, csv_file_path)
-
-    conn.close()
-
-    print(f"La tabla {tabla} se ha creado y los datos se han insertado correctamente.")
-
 
 def get_mapped_language(language, idiomas_mapeados):
     return idiomas_mapeados.get(language, 'english')
@@ -138,8 +116,6 @@ def create_index_by_language(conn, idiomas_mapeados):
     conn.commit()
     cur.close()
 
-
-
 idiomas_mapeados = {
     'es': 'spanish',
     'it': 'italian',
@@ -148,50 +124,67 @@ idiomas_mapeados = {
     'de':'german'
 }
 
+# ---------
 
-#main()
-#create_index_by_language(idiomas_mapeados)
-def search_inverted_index(query, language):
+def main():
+    # Conectar a la bd
+    conn = conectar_bd()
+
+    # Crear tabla
+    tabla="song"
+    crear_tabla(tabla,conn)
+
+    csv_file_path = '../Data/new_spotify.csv'
+    insertar_datos(conn, csv_file_path)
+
+    print(f"La tabla {tabla} se ha creado y los datos se han insertado correctamente.")
+    create_index_by_language(conn, idiomas_mapeados)
+    print("Indice creado correctamente")
+
+    conn.close()
+
+def search_inverted_index(query, language, k):
     conn = conectar_bd()
     cur = conn.cursor()
 
-    # Crear la consulta SQL para la búsqueda en el índice invertido con el idioma especificado
+    # Dividir la consulta en palabras individuales y usar el operador lógico &
+    # para combinarlas en una búsqueda de texto completo
+    split_query = query.split()
+    and_query = ' & '.join(split_query)
+    
     search_query = f"""
-        SELECT track_id, track_name, track_artist, lyrics, ts_rank_cd(inverted_index, query) AS rank
-        FROM song,
+        SELECT track_id, track_name, track_artist, lyrics FROM song,
              to_tsquery(%s) AS query
         WHERE inverted_index @@ query
         AND language = %s
-        ORDER BY rank DESC;
+        ORDER BY ts_rank_cd(inverted_index, query) DESC LIMIT {k};
     """
-
-    cur.execute(search_query, (query, language))
+    cur.execute(search_query, (and_query, language))
     results = cur.fetchall()
+
+    # Convertir los resultados a una lista de diccionarios
+    result_list = []
+    for row in results:
+        result_dict = {
+            'track_id': row[0],
+            'track_name': row[1],
+            'track_artist': row[2],
+            'lyrics': row[3]
+        }
+        result_list.append(result_dict)
 
     cur.close()
     conn.close()
+    return result_list
 
-    return results
 
-def for_user_sql(query,idioma):
+def for_user_spotify_sql(query,idioma,k):
     s_time = time.time()
-    results = search_inverted_index(query,idioma)
+    results = search_inverted_index(query,idioma,k)
     e_time = time.time()
     exe_time = e_time - s_time
-
-   
+    # print(results)
+    
     return results, round(exe_time, 3)
 
-"""
-search_results = search_inverted_index('girl','en')
-
-if search_results:
-    print("Resultados de la búsqueda:")
-    for result in search_results:
-        track_id, track_name, track_artist, lyrics, rank = result
-        print(f"ID: {track_id}, Nombre: {track_name}, Artista: {track_artist}, Letras: {lyrics[:100]}..., Relevancia: {rank}")
-    print(len(search_results))
-else:
-    print("No se encontraron resultados para la consulta.")
-"""
-
+# main ()
