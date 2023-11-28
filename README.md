@@ -70,9 +70,9 @@ El preprocesamiento de la data se realizó en un código aparte, llamado ```toke
 - Define una lista de idiomas mapeados.
 - Crea un diccionario llamado stopwords que almacena listas de stopwords para cada idioma (inglés, español, alemán, italiano y portugués).
 - Lee archivos de stopwords para cada idioma y los almacena en el diccionario stopwords.
+- __idiomas_mapeados: ['es','de','en','it','pt']__
 
-idiomas_mapeados=['es','de','en','it','pt']
-# stopwords 
+#### Stopwords 
 ```python
 stopwords = {
     'en': [],  
@@ -543,7 +543,7 @@ Se organiza los datos en capas jerárquicas de un espacio de características, f
 
 ![Faiss](https://miro.medium.com/v2/resize:fit:1400/1*ziU6_KIDqfmaDXKA1cMa8w.png)  
 
-#### Creacion del indice y funcion para la busqueda
+#### Creacion del indice HNSWFlat y funcion para la busqueda
 En este caso, se establecen 32 vecinos para cada cancion, usamos distancia eulediana para sacar los "vecinos optimos" a los cuales unirse.  
 
 ```python
