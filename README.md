@@ -57,6 +57,14 @@ El preprocesamiento de la data se realizó en un código aparte, llamado ```toke
 - Recibe una lista de tokens como entrada y elimina los stopwords. También hace un proceso de stemming utilizando "SnowballStemmer" de NLTK para reducir las palabras a su forma raíz. Devuelve una lista de tokens procesados.
 #### Limpieza y Tokenización del Texto:
 `clean_and_tokenize`: Es una función que realiza la limpieza y tokenización del texto.
+```python
+def clean_and_tokenize(text):
+    # Eliminar caracteres no alfanuméricos y convertir a minúsculas
+    text = re.sub(r'[^a-zA-Z0-9]', ' ', text).lower()
+    tokens = word_tokenize(text)
+    return tokens
+
+```
 - Limpia el texto eliminando caracteres no alfanuméricos y convirtiéndolo a minúsculas.
 - Utiliza la biblioteca NLTK para tokenizar el texto.
 
