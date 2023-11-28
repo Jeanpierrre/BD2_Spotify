@@ -537,6 +537,18 @@ Para realizar consultas en nuestro buscador, tendras que elegir el tipo de data 
 El problema de Rtree se agrava cuando se enfrenta a conjuntos de datos de alta dimensionalidad, contribuyendo así a la maldición de la dimensionalidad. A medida que aumenta la cantidad de dimensiones en el árbol Rtree, el cálculo de distancias se ve afectado negativamente. Si bien se sugiere incrementar las dimensiones para separar elementos similares, la eficiencia de Rtree disminuye significativamente. Este fenómeno se alinea con la maldición de la dimensionalidad, donde el exceso de variables independientes en un conjunto de datos puede impactar la calidad y la interpretación de los modelos. En el caso específico de Rtree, redimensionar la data a una dimensión más manejable, como 100, se convierte en una estrategia para mitigar los problemas derivados de la alta dimensionalidad.
 ![Mi Imagen](fotos/PCA.png)
 
+#### PCA
+El PCA se utilizara para transformar toda la data a una dimension la cual el rtree pueda construirse y tener una eficiencia aceptable.  
+Se extraen lo componentes principales, los cuales capturan a mayor varianza en los datos y con esto se logra una representación más compacta del conjunto de datos.
+
+```python
+n_dimensions = 100
+# Crear un objeto PCA
+pca = PCA(n_components=n_dimensions)
+# Aplicar PCA a las matrices
+matrices_reduced = pca.fit_transform(data_normalized)
+```
+
 
 Por lo tanto, a fines del experimento este se realizara bajo las mismas condiciones de data redimensionada para todos los algoritmos.  
 
