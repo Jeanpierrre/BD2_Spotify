@@ -71,6 +71,17 @@ El preprocesamiento de la data se realizó en un código aparte, llamado ```toke
 - Crea un diccionario llamado stopwords que almacena listas de stopwords para cada idioma (inglés, español, alemán, italiano y portugués).
 - Lee archivos de stopwords para cada idioma y los almacena en el diccionario stopwords.
 
+idiomas_mapeados=['es','de','en','it','pt']
+# stopwords 
+```python
+stopwords = {
+    'en': [],  
+    'es': [], 
+    'it': [],
+    'de':[],
+    'pt':[]
+}
+```
 #### Stemming
 
 - Recibe una lista de tokens como entrada y elimina los stopwords. También hace un proceso de stemming utilizando "SnowballStemmer" de NLTK para reducir las palabras a su forma raíz. Devuelve una lista de tokens procesados.
