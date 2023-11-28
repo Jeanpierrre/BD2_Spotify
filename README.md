@@ -473,6 +473,9 @@ La implementacion de HNSWFlat en la clase faiis, es un algoritmo de búsqueda de
  
 ![Mi Imagen](fotos/Faiss_.PNG)
 ![Mi Imagen](fotos/Union.PNG)
+Se organiza los datos en capas jerárquicas de un espacio de características, facilitando la búsqueda eficiente de vecinos cercanos en espacios de alta dimensión.
+![Faiss](https://miro.medium.com/v2/resize:fit:1400/1*ziU6_KIDqfmaDXKA1cMa8w.png)
+
   
 
 Desventajas:  
