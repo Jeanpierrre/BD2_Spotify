@@ -20,8 +20,22 @@ El conjunto de datos disponible en (https://www.kaggle.com/datasets/imuhammad/au
 Inicialmente, el conjunto de datos original fue utilizado en la tercera semana del proyecto TidyTuesday y solo comprendía características de audio y géneros. Para enriquecer la información, se agregaron las letras a través de la biblioteca Genius en R, y se incorporó el idioma de las letras utilizando la biblioteca langdetect en Python. Sin embargo, es importante tener en cuenta que aproximadamente solo la mitad de las canciones originales se encuentran disponibles en este conjunto de datos, ya que las letras no pudieron recuperarse para muchas de ellas.
 
 ## Backend
-El backend fue construido utilizando el lenguaje de programación Python. Se crearon APIs y rutas específicas para cada método de indexación (en este caso, PostgreSQL y la implementación propia) basándose en la base de datos suministrada.
-Para Postgresql usamos psycopg2 para hacer la conexion:
+
+El backend fue construido utilizando el lenguaje de programación Python. Se crearon APIs y rutas específicas para cada método de indexación (en este caso, PostgreSQL y la implementación propia) basándose en la base de datos suministrada junto con el correcto manejo de esta.
+
+# Implementación de PostgreSQL
+
+Al momento de utilizar Postgresql usamos __psycopg2__ para hacer la conexion:
+
+```python
+def conectar_bd():
+    # Establecer la conexión a la base de datos PostgreSQL
+    conn = psycopg2.connect(dbname='spotify', user='postgres', host='localhost', password='1234')
+    print("Conectado a la base de datos:", conn.dsn)
+    return conn
+```
+
+Una vez establecida la conexión con el usuario PostgreSQL, nuestro código creará la tabla e insertará los datos según los archivos CSVs descargados. Por último, y también de forma automática, se creará el indice por cada lenguaje y se agregará a la tabla con la data ya establecida en nuestro servidor PostgrSQL.
 
 ```python
 def create_index_by_language(conn, idiomas_mapeados):
@@ -138,6 +152,7 @@ Para esta funcion usamos el algoritmo visto en clase para la creacion de indice 
 ![Mi Imagen](rm_assets/spimi.png)
 
 `spimi_invert_from_json` : Esta función toma un archivo JSON que contiene datos procesados de pistas de música y crea bloques temporales de un tamaño máximo determinado. Cada bloque contiene un índice invertido parcial, donde los términos están asociados con los documentos (ID de pista) en los que aparecen. Los bloques temporales se guardan en archivos JSON separados en un directorio temporal.
+
 ```python
 def spimi_invert_from_json(json_file, output_directory, max_block_size):
     # Inicializar variables y estructuras de datos necesarias
@@ -280,36 +295,44 @@ for idioma in idiomas_mapeados:
 Para las consultas se ha implementado un motor de búsqueda eficiente que utiliza el esquema de similitud de coseno en combinación con TF-IDF. Este enfoque permite realizar consultas efectivas y recuperar documentos relevantes según la similitud de términos ponderados.
 
 ```python
-def search(query, inverted_index, document_lengths, total_docs, tfidf_data, topk):
-    topk = int(topk)
-    query_tokens = query.split()
+def search(query, inverted_index, document_lengths, total_docs, tfidf_data, idioma, k):
+    k = int(k)
+    try:
+        query_tokens = query.split()
+        query_tfidf = {}
+        for term in query_tokens:
+            tfidf = calculate_tfidf(term, query_tokens, inverted_index[idioma], total_docs)
+            query_tfidf[term] = tfidf
 
-    query_tfidf = {term: calculate_tfidf(term, query_tokens, inverted_index, total_docs) for term in query_tokens}
-    query_length = calculate_document_length(query_tokens, inverted_index, total_docs)
+        query_length = calculate_document_length(query_tokens, inverted_index[idioma], total_docs)
+        cosine_scores = {}
+        for doc_id, doc_length in document_lengths[idioma].items():
+            score = 0.0
+            for term, tfidf in query_tfidf.items():
+                if term in inverted_index[idioma]:
+                    if doc_id in inverted_index[idioma][term]:
+                        score += tfidf * tfidf_data[idioma][doc_id][term]
+            score /= doc_length * query_length
+            cosine_scores[doc_id] = score
 
-    # Obtener los documentos que contienen al menos uno de los términos de la consulta
-    relevant_docs = set(doc_id for term in query_tfidf for doc_id in inverted_index.get(term, {}))
+        # Ordenar los documentos por puntaje coseno y retornar los 10 mejores
+        results = sorted(cosine_scores.items(), key=lambda x: x[1], reverse=True)
+        results = [x for x in results if x[1] != 0.0]
+        results = results[:k]
+        return results
 
-    cosine_scores = {}
-    for doc_id in relevant_docs:
-        score = sum(query_tfidf[term] * tfidf_data[doc_id].get(term, 0) for term in query_tfidf)
-        score /= document_lengths[doc_id] * query_length
-        cosine_scores[doc_id] = score
-
-    # Ordenar los documentos por puntaje coseno y retornar los 10 mejores, no incluir si tiene el score 0
-    results = [(doc_id, score) for doc_id, score in sorted(cosine_scores.items(), key=lambda x: x[1], reverse=True) if score > 0][:topk]
-
-    return results
+    except Exception as e:
+        return []
 ```
 
-## Resumen - Proceso general de método:
+## Resumen - Proceso general de método de índice invertido:
     - Tokenización y cálculo de pesos TF-IDF para la consulta.
     - Determinación de documentos relevantes.
     - Cálculo de puntajes de similitud de coseno entre consulta y documentos.
     - Ordenamiento descendente de documentos por puntaje.
     - Retorno de los 10 mejores documentos, excluyendo aquellos con puntaje 0.
 
-## Descarga de canciones
+# Descarga de canciones y gestión de características
 
 La descarga de canciones se llevó a cabo mediante el uso de dos bibliotecas fundamentales: ```Spotify``` y ```spotdl```.
 
@@ -404,7 +427,8 @@ El tempo se refiere a la velocidad o ritmo de una composición musical.
 ```python
         tempo, tempogram = librosa.beat.beat_track(y=audio, sr=sr)
 ```
-![Librosa](https://librosa.org/doc/main/_images/librosa-beat-plp-1_00.png)   
+![Librosa](https://librosa.org/doc/main/_images/librosa-beat-plp-1_00.png)
+
 Definimos como maximo 1000 dimensiones, ya que segun un calculo del promedio es la cantidad mas acertada para todos.  
 Concatenamos todas las caracteristicas previas y en caso de no llenar a 1000 lo relleno con 0, si se pasa simplemente la recorto. Este recorte se puede considerar "malo", sin embargo, como el recorte no sobrepasa ni el 10% de la dimension total entonces es valido para estos casos.
 
