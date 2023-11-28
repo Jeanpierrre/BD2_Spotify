@@ -1,0 +1,430 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Clothes Search Index</title>
+        <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='index.css') }}">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.3.0/css/all.min.css"/>
+        <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+
+    </head>
+
+    <body>
+        <form id="mainForm" action="/" method="POST">
+            <div class="navbar">
+                <button id="cloth_button" name="main_button" value="1">Clothes</button>
+                <button id="song_button" name="main_button" value="2">Songs</button>
+            </div>
+        </form>
+
+        <section_2 id="songSearch">
+            <div class="container">
+                <h1 class="tittle-songs">
+                    Welcome to our songs search engine
+                </h1>
+
+                <div class="search-bar">
+                    <form class="search-box" action="/songs-engine" method="POST">
+                        <i class="fa-solid fa-magnifying-glass"></i>
+                        <input type="hidden" id="search-option-songs" name="search-option-songs" value="Our_index">
+                        <input type="hidden" id="language-option" name="language-option" value="Language">
+                        <input name="input_text" type="text" id="search-input-songs" placeholder="Search by Our index..." />
+                    </form>
+
+                    <div class="dropdown-songs">
+                        <div id="drop-text-songs" class="dropdown-text-songs">
+                            <span id="span-songs">Our index</span>
+                            <i id="icon-songs" class="fa-solid fa-chevron-down"></i>
+                        </div>
+                        <ul id="list-songs" class="dropdown-list-songs">
+                            <li class="dropdown-list-item-songs">Our index</li>
+                            <li class="dropdown-list-item-songs">PSQL</li>
+                        </ul>
+                    </div>
+
+                    <div class="dropdown-songs-l">
+                        <div id="drop-text-songs-l" class="dropdown-text-songs-l">
+                            <span id="span-songs-l">Language</span>
+                            <i id="icon-songs-l" class="fa-solid fa-chevron-down"></i>
+                        </div>
+                        <ul id="list-songs-l" class="dropdown-list-songs-l">
+                            <li class="dropdown-list-item-songs-l">Language</li>
+                            <li class="dropdown-list-item-songs-l">Spanish</li>
+                            <li class="dropdown-list-item-songs-l">English</li>
+                            <li class="dropdown-list-item-songs-l">Aleman</li>
+                            <li class="dropdown-list-item-songs-l">Italian</li>
+                            <li class="dropdown-list-item-songs-l">Portuguese</li>
+                        </ul>
+                    </div>
+                </div>
+
+                {% if error_message_1 %}
+                    <script>
+                        alert("{{ error_message_1 }}");
+                    </script>
+                {% endif %}
+
+                <div class="for_results_songs">
+                    {% if product_names %}
+                        <div class="for_results_songs">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>Track Name</th>
+                                        <th>Track Artist</th>
+                                        <th>Lyrics</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for track in product_names %}
+                                    <tr>
+                                        <td>{{ track['track_name'] }}</td>
+                                        <td>{{ track['track_artist'] }}</td>
+                                        <td>{{ track['lyrics'] }}</td>
+                                        <td>
+                                            <form action="/listen" method="GET">
+                                                <input type="hidden" name="track_name" value="{{ track['track_name'] }}">
+                                                <input type="hidden" name="track_artist" value="{{ track['track_artist'] }}">
+                                                <input type="hidden" name="track_id" value="{{ track['track_id'] }}">
+                                                
+                                                <button type="button" onclick="listenToTrack('{{ track['track_name'] }}', '{{ track['track_artist'] }}', '{{ track['track_id'] }}')">
+                                                    Listen on Spotify
+                                                </button>
+                                                <br></br>
+                                                <audio controls onplay="showSongsDetails('{{ track['track_name'] }}', '{{ track['track_artist'] }}', '{{ track['track_id'] }}')">
+                                                    <source src="{{ url_for('static', filename='Songs/' + track['track_id'] + '.mp3') }}" type="audio/mp3">
+                                                </audio>
+                                                
+                                            </form>
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    {% endif %}
+                </div>
+    
+                <div class="for_results_songs">
+                    {% if time %}
+                        <p> Tiempo de ejecución: {{ time }} segundos</p>
+                    {% endif %}
+                </div>
+    
+                <div class="under-songs">
+                    Created by: Angel Mucha, Jean Pierre Sotomayor, Juan Torres
+                </div>
+
+                <div class="songs-separator"></div>        
+            </div>
+        </section_2>
+
+        <div id="songs-similarityDiv" class="songs-similarity-container">
+            <span class="close-btn" onclick="closeSongsDetails()" style="display: none;">&times;</span>
+            <div id="songs-similarity-wrapper"></div>
+        </div>
+    </body>
+
+    <script>
+        function submitForm(buttonName, buttonValue) {
+            document.getElementById(buttonName).value = buttonValue;
+            document.getElementById('mainForm').submit();
+        }
+
+        // For search option && lenguage option
+
+        let dropdownBtnTextSongs = document.getElementById("drop-text-songs");
+        let spanSongs = document.getElementById("span-songs");
+        let iconSongs = document.getElementById("icon-songs");
+        let listSongs = document.getElementById("list-songs");
+        let inputSongs = document.getElementById("search-input-songs"); // for placeholder
+        let inputSoSongs = document.getElementById("search-option-songs");
+        let listItemsSongs = document.querySelectorAll(".dropdown-list-item-songs");
+
+        let dropdownLg = document.getElementById("drop-text-songs-l");
+        let spanSongsLg = document.getElementById("span-songs-l");
+        let iconSongsLg = document.getElementById("icon-songs-l");
+        let listSongsLg = document.getElementById("list-songs-l");
+        let listItemsSongsLg = document.querySelectorAll(".dropdown-list-item-songs-l");
+        let lg_option = document.getElementById("language-option")  
+
+        function closeDropdowns() {
+            listSongs.classList.remove("show");
+            iconSongs.style.rotate = "0deg";
+
+            listSongsLg.classList.remove("show");
+            iconSongsLg.style.rotate = "0deg";
+        }
+
+        dropdownBtnTextSongs.onclick = function (e) {
+            e.stopPropagation();
+            listSongs.classList.toggle("show");
+            iconSongs.style.rotate = "-180deg";
+        };
+
+        dropdownLg.onclick = function (e) {
+            e.stopPropagation();
+            listSongsLg.classList.toggle("show");
+            iconSongsLg.style.rotate = "-180deg"
+        }
+
+        window.onclick = function (e) {
+            if (e.target.id !== "drop-text-songs" && e.target.id !== "icon-songs" && e.target.id !== "span-songs" && 
+                e.target.id !== "drop-text-songs-l" && e.target.id !== "icon-songs-l" && e.target.id !== "span-songs-l" ) {
+                closeDropdowns();
+            }
+        };
+
+        for (item of listItemsSongs) {
+            item.onclick = function (e) {
+                e.stopPropagation();
+                spanSongs.innerText = e.target.innerText;
+                if (e.target.innerText == "Our index") {
+                    inputSongs.placeholder = "Search by Our index...";
+                    inputSoSongs.value = "Our_index";
+                } else {
+                    inputSongs.placeholder = "Search by PSQL...";
+                    inputSoSongs.value = "PSQL";
+                }
+                closeDropdowns();
+            };
+        };
+
+        for (item of listItemsSongsLg) {
+            item.onclick = function (e) {
+                e.stopPropagation();
+                spanSongsLg.innerText = e.target.innerText;
+
+                if (e.target.innerText == "Language") { lg_option.value = "Language"; }
+                else if (e.target.innerText == "Spanish") { lg_option.value = "es"; }
+                else if (e.target.innerText == "English") { lg_option.value = "en"; }
+                else if (e.target.innerText == "Aleman") { lg_option.value = "de"; }
+                else if (e.target.innerText == "Italian") { lg_option.value = "it"; }
+                else if (e.target.innerText == "Portuguese") { lg_option.value = "pt"; }
+                closeDropdowns();
+            };
+        };
+
+        // For similarity section
+        function load_priority_queue(track_id) {
+            var quantityValue = document.getElementById('quantityInput').value;
+
+            // Crear un objeto FormData y agregar el valor de quantity
+            var formData = new FormData();
+            formData.append('quantity', quantityValue);
+            formData.append('track_id', track_id);
+
+            // Realizar una solicitud AJAX para enviar el valor de quantity y track_id a la ruta específica
+            fetch('/table_for_knn_priority_queue', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.text())
+            .then(data => {
+                console.log(data);
+                // Agrega la tabla al contenido del contenedor
+                document.getElementById('similarity-table-container').innerHTML = data;
+            }).catch(error => console.error('Error:', error));
+        }
+
+        function load_range(track_id) {
+            /*
+            document.getElementById('similarity-table-container').innerHTML = ''
+
+            var formData = new FormData();
+            formData.append('track_id', track_id);
+
+            // Realiza una solicitud AJAX para obtener la tabla desde Flask para KNN-Sequential
+            var xhr = new XMLHttpRequest();
+            xhr.onreadystatechange = function () {
+                if (xhr.readyState == 4 && xhr.status == 200) {
+                    // Agrega la tabla al contenido del contenedor
+                    document.getElementById('similarity-table-container').innerHTML += xhr.responseText;
+                }
+            };
+
+            // Realiza una solicitud GET a la ruta de Flask que devuelve la tabla para KNN-Sequential
+            xhr.open("POST", "/table_for_range_search", true);
+            xhr.send(formData);
+            */
+
+            var quantityValue = document.getElementById('quantityInput').value;
+
+            // Crear un objeto FormData y agregar el valor de quantity
+            var formData = new FormData();
+            formData.append('quantity', quantityValue);
+            formData.append('track_id', track_id);
+
+            // Realizar una solicitud AJAX para enviar el valor de quantity y track_id a la ruta específica
+            fetch('/table_for_range_search', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.text())
+            .then(data => {
+                console.log(data);
+                // Agrega la tabla al contenido del contenedor
+                document.getElementById('similarity-table-container').innerHTML = data;
+            }).catch(error => console.error('Error:', error));
+        }
+
+        function load_sequential(track_id) {
+            /*
+            document.getElementById('similarity-table-container').innerHTML = ''
+
+            var formData = new FormData();
+            formData.append('track_id', track_id);
+
+            // Realiza una solicitud AJAX para obtener la tabla desde Flask para KNN-Sequential
+            var xhr = new XMLHttpRequest();
+            xhr.onreadystatechange = function () {
+                if (xhr.readyState == 4 && xhr.status == 200) {
+                    // Agrega la tabla al contenido del contenedor
+                    document.getElementById('similarity-table-container').innerHTML += xhr.responseText;
+                }
+            };
+
+            // Realiza una solicitud GET a la ruta de Flask que devuelve la tabla para KNN-Sequential
+            xhr.open("POST", "/table_for_knn_sequential", true);
+            xhr.send(formData);
+            */
+            
+            var quantityValue = document.getElementById('quantityInput').value;
+
+            // Crear un objeto FormData y agregar el valor de quantity
+            var formData = new FormData();
+            formData.append('quantity', quantityValue);
+            formData.append('track_id', track_id);
+
+            // Realizar una solicitud AJAX para enviar el valor de quantity y track_id a la ruta específica
+            fetch('/table_for_knn_sequential', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.text())
+            .then(data => {
+                console.log(data);
+                // Agrega la tabla al contenido del contenedor
+                document.getElementById('similarity-table-container').innerHTML = data;
+            }).catch(error => console.error('Error:', error));
+        }
+
+        function load_rtree(track_id) {
+            /*
+            document.getElementById('similarity-table-container').innerHTML = ''
+            
+            var formData = new FormData();
+            formData.append('track_id', track_id);
+
+            var xhr = new XMLHttpRequest();
+            xhr.onreadystatechange = function () {
+                if (xhr.readyState == 4 && xhr.status == 200) {
+                    // Agrega la tabla al contenido del contenedor
+                    document.getElementById('similarity-table-container').innerHTML += xhr.responseText;
+                }
+            };
+
+            xhr.open("POST", "/table_for_knn_rtree", true);
+            xhr.send(formData);
+            */
+            
+            var quantityValue = document.getElementById('quantityInput').value;
+
+            // Crear un objeto FormData y agregar el valor de quantity
+            var formData = new FormData();
+            formData.append('quantity', quantityValue);
+            formData.append('track_id', track_id);
+
+            // Realizar una solicitud AJAX para enviar el valor de quantity y track_id a la ruta específica
+            fetch('/table_for_knn_rtree', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.text())
+            .then(data => {
+                console.log(data);
+                // Agrega la tabla al contenido del contenedor
+                document.getElementById('similarity-table-container').innerHTML = data;
+            }).catch(error => console.error('Error:', error));
+        }
+
+        function load_highd(track_id) {
+            /*
+            document.getElementById('similarity-table-container').innerHTML = ''
+            // Realiza una solicitud AJAX para obtener la tabla desde Flask para KNN-Sequential
+            var xhr = new XMLHttpRequest();
+            xhr.onreadystatechange = function () {
+                if (xhr.readyState == 4 && xhr.status == 200) {
+                    // Agrega la tabla al contenido del contenedor
+                    document.getElementById('similarity-table-container').innerHTML += xhr.responseText;
+                }
+            };
+
+            // Realiza una solicitud GET a la ruta de Flask que devuelve la tabla para KNN-Sequential
+            xhr.open("GET", "/table_for_knn_highd", true);
+            xhr.send();
+            */
+            
+            var quantityValue = document.getElementById('quantityInput').value;
+
+            // Crear un objeto FormData y agregar el valor de quantity
+            var formData = new FormData();
+            formData.append('quantity', quantityValue);
+            formData.append('track_id', track_id);
+
+            // Realizar una solicitud AJAX para enviar el valor de quantity y track_id a la ruta específica
+            fetch('/table_for_knn_highd', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.text())
+            .then(data => {
+                console.log(data);
+                // Agrega la tabla al contenido del contenedor
+                document.getElementById('similarity-table-container').innerHTML = data;
+            }).catch(error => console.error('Error:', error));
+        }
+        
+        function showSongsDetails(name, artist, track_id) {
+            document.getElementById('songs-similarity-wrapper').innerHTML = 
+                `
+                <h1 class="ss_tittle"> Similar songs to - ${name}</h1>
+                <div class="button-container">
+                    <button onclick="load_priority_queue('${track_id}')">KNN-by-PriorityQueue</button>
+                    <button onclick="load_range('${track_id}')">KNN-by-range</button>
+                    <button onclick="load_sequential('${track_id}')">KNN-Sequential</button>
+                    <button onclick="load_rtree('${track_id}')">KNN-Rtree</button>
+                    <button onclick="load_highd('${track_id}')">KNN-HighD</button>
+
+                    <input type="number" class="quantity-input" id="quantityInput" name="quantity" min="1" max="50" value="2">
+                </div>
+                <div id="similarity-table-container" class="similarity-table-container"></div>
+                `;
+            document.getElementById('songs-similarityDiv').style.display = 'block';
+            document.querySelector('#songs-similarityDiv .close-btn').style.display = 'block'
+        }
+
+        function closeSongsDetails() {
+            document.getElementById('songs-similarityDiv').style.display = 'none';
+        }
+
+        function listenToTrack(trackName, trackArtist, trackId) {
+            $.ajax({
+                type: 'GET',
+                url: '/listen',
+                data: {
+                    track_name: trackName,
+                    track_artist: trackArtist
+                },
+                success: function(response) {
+                    // Actualiza la interfaz de usuario según sea necesario
+                    showSongsDetails(trackName, trackArtist, trackId);
+                },
+                error: function(error) { console.error('Error AJAX', error); }
+            });
+        }
+    </script>
+</html>

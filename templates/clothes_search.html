@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Clothes Search Index</title>
+        <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='index.css') }}">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.3.0/css/all.min.css"/>
+    </head>
+
+    <body>
+        <form id="mainForm" action="/" method="POST">
+            <div class="navbar">
+                <button id="cloth_button" name="main_button" value="1">Clothes</button>
+                <button id="song_button" name="main_button" value="2">Songs</button>
+            </div>
+        </form>
+
+        <section_1 id="clothingSearch">
+            <div class="container">
+                <h1 class="tittle">
+                    Welcome to our clothing search engine
+                </h1>
+    
+                <div class="search-bar">
+                    <div class="dropdown">
+                        <div id="drop-text" class="dropdown-text">
+                            <span id="span">Our index</span>
+                            <i id="icon" class="fa-solid fa-chevron-down"></i>
+                        </div>
+                        <ul id="list" class="dropdown-list">
+                            <li class="dropdown-list-item">Our index</li>
+                            <li class="dropdown-list-item">PSQL</li>
+                        </ul>
+                    </div>
+    
+                    <form class="search-box" action="/" method="POST">
+                        <input name="input_text" type="text" id="search-input" placeholder="Search by Our index..." />
+                        <input type="hidden" id="search_option" name="search_option" value="Our_index">
+                        <i class="fa-solid fa-magnifying-glass"></i>
+                    </form>
+                </div>
+
+                {% if error_message %}
+                    <script>
+                        alert("{{ error_message }}");
+                    </script>
+                {% endif %}
+    
+                <div class="for_results">
+                    <div class="gallery">
+                        {% if gallery_data %}
+                            {% for link, name in gallery_data %}
+                                <div class="gallery-item" onclick="showDetails('{{ name }}')">
+                                    <img src="{{ link }}" alt="Imagen">
+                                    <p>{{ name }}</p>
+                                </div>
+                            {% endfor %}
+                        {% endif %}
+                    </div>
+                </div>
+    
+                <div class="for_results">
+                    {% if time %}
+                        <p> Tiempo de ejecución: {{ time }} segundos</p>
+                    {% endif %}
+                </div>
+    
+                <div class="under">
+                    Created by: Angel Mucha, Jean Pierre Sotomayor, Juan Torres
+                </div>
+
+                <div class="images-separator"></div>
+
+                <div id="similarity-Div" class="similarity-container">
+                    <span class="close-btn" onclick="closeDetails()" style="display: none;">&times;</span>
+                    <div id="similarity-wrapper"></div>
+                </div>
+            </div>
+        </section_1>
+    </body>
+
+    <script>
+        function submitForm(buttonName, buttonValue) {
+            document.getElementById(buttonName).value = buttonValue;
+            document.getElementById('mainForm').submit();
+        }
+
+        // For search option
+
+        let dropdownBtnText = document.getElementById("drop-text");
+        let span = document.getElementById("span");
+        let icon = document.getElementById("icon");
+        let list = document.getElementById("list");
+        let input = document.getElementById("search-input"); // for placeholder
+        let input_so = document.getElementById("search_option");
+        let listItems = document.querySelectorAll(".dropdown-list-item");
+
+        function closeDropdowns() {
+            list.classList.remove("show");
+            icon.style.rotate = "0deg";
+        }
+
+        dropdownBtnText.onclick = function (e) {
+            e.stopPropagation();
+            list.classList.toggle("show");
+            icon.style.rotate = "-180deg";
+        };
+
+        window.onclick = function (e) {
+            if (e.target.id !== "drop-text" && e.target.id !== "icon" && e.target.id !== "span") {
+                closeDropdowns();
+            }
+        };
+
+        for (item of listItems) {
+            item.onclick = function (e) {
+                e.stopPropagation();
+                span.innerText = e.target.innerText;
+                if (e.target.innerText == "Our index") {
+                    input.placeholder = "Search by Our index...";
+                    input_so.value = "Our_index";
+                } else {
+                    input.placeholder = "Search by PSQL...";
+                    input_so.value = "PSQL";
+                }
+                closeDropdowns();
+            };
+        }
+
+        // For similarity section
+
+        function showDetails(name) {
+            document.getElementById('similarity-wrapper').innerHTML = 
+                `
+                <h2>Similar images to - ${name}</h2>
+                <h2>${name}</h2>
+                
+                `;
+            document.getElementById('similarity-Div').style.display = 'block';
+            document.querySelector('#similarity-Div .close-btn').style.display = 'block'
+        }
+
+        function closeDetails() {
+            document.getElementById('similarity-Div').style.display = 'none';
+        }
+    </script>
+</html>
